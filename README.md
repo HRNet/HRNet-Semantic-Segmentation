@@ -7,7 +7,7 @@ We augment the HRNet with a very simple segmentation head shown in the figure be
 ![](figures/seg-hrnet.png)
 
 ## Segmentation models
-HRNetV2 Segmentation models are now available. All the results are reproduced using this repo!!!
+HRNetV2 Segmentation models are now available. All the results are reproduced by using this repo!!!
 
 The models are initialized by the weights pretrained on the ImageNet. You can download the pretrained models from  https://github.com/HRNet/HRNet-Image-Classification.
 
