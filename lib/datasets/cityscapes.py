@@ -59,6 +59,11 @@ class Cityscapes(BaseDataset):
                               25: 12, 26: 13, 27: 14, 28: 15, 
                               29: ignore_label, 30: ignore_label, 
                               31: 16, 32: 17, 33: 18}
+        self.class_weights = torch.FloatTensor([0.8373, 0.918, 0.866, 1.0345, 
+                                        1.0166, 0.9969, 0.9754, 1.0489,
+                                        0.8786, 1.0023, 0.9539, 0.9843, 
+                                        1.1116, 0.9037, 1.0865, 1.0955, 
+                                        1.0865, 1.1529, 1.0507]).cuda()
     
     def read_files(self):
         files = []
