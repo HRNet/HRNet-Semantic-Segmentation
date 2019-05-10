@@ -127,7 +127,8 @@ Evaluating our model on the LIP validation set with flip testing:
 python tools/test.py --cfg experiments/lip/seg_hrnet_w48_473x473_sgd_lr7e-3_wd5e-4_bs_40_epoch150.yaml \
                      DATASET.TEST_SET list/lip/testvalList.txt \
                      TEST.MODEL_FILE hrnet_w48_lip_cls20_473x473.pth \
-                     TEST.FLIP_TEST True
+                     TEST.FLIP_TEST True \
+                     TEST.NUM_SAMPLES 0
 ````
 
 ## Other applications of HRNet
