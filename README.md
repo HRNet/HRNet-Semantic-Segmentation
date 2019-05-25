@@ -135,7 +135,7 @@ python tools/test.py --cfg experiments/lip/seg_hrnet_w48_473x473_sgd_lr7e-3_wd5e
 * [Human pose estimation](https://github.com/leoxiaobin/deep-high-resolution-net.pytorch)
 * [Image Classification](https://github.com/HRNet/HRNet-Image-Classification)
 * [Object detection](https://github.com/HRNet/HRNet-Object-Detection)
-* [Facial landmark detection](https://github.com/HRNet/HRNet-Facial-Landmark-Detection) (coming soon)
+* [Facial landmark detection](https://github.com/HRNet/HRNet-Facial-Landmark-Detection)
 
 ## Citation
 If you find this work or code is helpful in your research, please cite:
