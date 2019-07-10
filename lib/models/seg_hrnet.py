@@ -424,7 +424,10 @@ class HighResolutionNet(nn.Module):
         x_list = []
         for i in range(self.stage3_cfg['NUM_BRANCHES']):
             if self.transition2[i] is not None:
-                x_list.append(self.transition2[i](y_list[-1]))
+                if i < self.stage2_cfg['NUM_BRANCHES']:
+                    x_list.append(self.transition2[i](y_list[i]))
+                else:
+                    x_list.append(self.transition2[i](y_list[-1]))
             else:
                 x_list.append(y_list[i])
         y_list = self.stage3(x_list)
@@ -432,7 +435,10 @@ class HighResolutionNet(nn.Module):
         x_list = []
         for i in range(self.stage4_cfg['NUM_BRANCHES']):
             if self.transition3[i] is not None:
-                x_list.append(self.transition3[i](y_list[-1]))
+                if i < self.stage3_cfg['NUM_BRANCHES']:
+                    x_list.append(self.transition3[i](y_list[i]))
+                else:
+                    x_list.append(self.transition3[i](y_list[-1]))
             else:
                 x_list.append(y_list[i])
         x = self.stage4(x_list)
