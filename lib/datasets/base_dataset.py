@@ -74,9 +74,16 @@ class BaseDataset(data.Dataset):
 
         return image, label
 
-    def multi_scale_aug(self, image, label=None, 
-            rand_scale=1, rand_crop=True):
-        long_size = np.int(self.base_size * rand_scale + 0.5)
+    def center_crop(self, image, label):
+        h, w = image.shape[:2]
+        x = int(round((w - self.crop_size[1]) / 2.))
+        y = int(round((h - self.crop_size[0]) / 2.))
+        image = image[y:y+self.crop_size[0], x:x+self.crop_size[1]]
+        label = label[y:y+self.crop_size[0], x:x+self.crop_size[1]]
+
+        return image, label
+    
+    def image_resize(self, image, long_size, label=None):
         h, w = image.shape[:2]
         if h > w:
             new_h = long_size
@@ -93,17 +100,32 @@ class BaseDataset(data.Dataset):
         else:
             return image
         
-        if rand_crop:
-            image, label = self.rand_crop(image, label)
-        
         return image, label
 
+    def multi_scale_aug(self, image, label=None, 
+            rand_scale=1, rand_crop=True):
+        long_size = np.int(self.base_size * rand_scale + 0.5)
+        if label is not None:
+            image, label = self.image_resize(image, long_size, label)
+            if rand_crop:
+                image, label = self.rand_crop(image, label)
+            return image, label
+        else:
+            image = self.image_resize(image, long_size)
+            return image
+
     def gen_sample(self, image, label, 
-            multi_scale=True, is_flip=True):
+            multi_scale=True, is_flip=True, center_crop_test=False):
         if multi_scale:
             rand_scale = 0.5 + random.randint(0, self.scale_factor) / 10.0
             image, label = self.multi_scale_aug(image, label, 
                                                     rand_scale=rand_scale)
+
+        if center_crop_test:
+            image, label = self.image_resize(image, 
+                                             self.base_size,
+                                             label)
+            image, label = self.center_crop(image, label)
 
         image = self.input_transform(image)
         label = self.label_transform(label)
@@ -145,11 +167,12 @@ class BaseDataset(data.Dataset):
     def multi_scale_inference(self, model, image, scales=[1], flip=False):
         batch, _, ori_height, ori_width = image.size()
         assert batch == 1, "only supporting batchsize 1."
+        device = torch.device("cuda:%d" % model.device_ids[0])
         image = image.numpy()[0].transpose((1,2,0)).copy()
         stride_h = np.int(self.crop_size[0] * 2.0 / 3.0)
         stride_w = np.int(self.crop_size[1] * 2.0 / 3.0)
         final_pred = torch.zeros([1, self.num_classes,
-                                    ori_height,ori_width]).cuda()
+                                    ori_height,ori_width]).to(device)
         padvalue = -1.0  * np.array(self.mean) / np.array(self.std)
         for scale in scales:
             new_img = self.multi_scale_aug(image=image,
@@ -175,8 +198,8 @@ class BaseDataset(data.Dataset):
                 cols = np.int(np.ceil(1.0 * (new_w - 
                                 self.crop_size[1]) / stride_w)) + 1
                 preds = torch.zeros([1, self.num_classes,
-                                           new_h,new_w]).cuda()
-                count = torch.zeros([1,1, new_h, new_w]).cuda()
+                                           new_h,new_w]).to(device)
+                count = torch.zeros([1,1, new_h, new_w]).to(device)
 
                 for r in range(rows):
                     for c in range(cols):
@@ -195,6 +218,7 @@ class BaseDataset(data.Dataset):
                         crop_img = np.expand_dims(crop_img, axis=0)
                         crop_img = torch.from_numpy(crop_img)
                         pred = self.inference(model, crop_img, flip)
+
                         preds[:,:,h0:h1,w0:w1] += pred[:,:, 0:h1-h0, 0:w1-w0]
                         count[:,:,h0:h1,w0:w1] += 1
                 preds = preds / count

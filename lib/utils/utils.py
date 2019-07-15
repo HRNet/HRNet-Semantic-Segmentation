@@ -35,6 +35,16 @@ class FullModel(nn.Module):
     loss = self.loss(outputs, labels)
     return torch.unsqueeze(loss,0), outputs
 
+def get_world_size():
+    if not torch.distributed.is_initialized():
+        return 1
+    return torch.distributed.get_world_size()
+
+def get_rank():
+    if not torch.distributed.is_initialized():
+        return 0
+    return torch.distributed.get_rank()
+
 class AverageMeter(object):
     """Computes and stores the average and current value"""
 

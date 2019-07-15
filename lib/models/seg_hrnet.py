@@ -19,10 +19,8 @@ import torch.nn as nn
 import torch._utils
 import torch.nn.functional as F
 
-from .sync_bn.inplace_abn.bn import InPlaceABNSync
-
-BatchNorm2d = functools.partial(InPlaceABNSync, activation='none')
-BN_MOMENTUM = 0.01
+BatchNorm2d = nn.BatchNorm2d
+BN_MOMENTUM = 0.1
 logger = logging.getLogger(__name__)
 
 def conv3x3(in_planes, out_planes, stride=1):
@@ -38,7 +36,7 @@ class BasicBlock(nn.Module):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
         self.bn1 = BatchNorm2d(planes, momentum=BN_MOMENTUM)
-        self.relu = nn.ReLU(inplace=False)
+        self.relu = nn.ReLU(inplace=True)
         self.conv2 = conv3x3(planes, planes)
         self.bn2 = BatchNorm2d(planes, momentum=BN_MOMENTUM)
         self.downsample = downsample
@@ -57,7 +55,7 @@ class BasicBlock(nn.Module):
         if self.downsample is not None:
             residual = self.downsample(x)
 
-        out = out + residual
+        out += residual
         out = self.relu(out)
 
         return out
@@ -77,7 +75,7 @@ class Bottleneck(nn.Module):
                                bias=False)
         self.bn3 = BatchNorm2d(planes * self.expansion,
                                momentum=BN_MOMENTUM)
-        self.relu = nn.ReLU(inplace=False)
+        self.relu = nn.ReLU(inplace=True)
         self.downsample = downsample
         self.stride = stride
 
@@ -98,7 +96,7 @@ class Bottleneck(nn.Module):
         if self.downsample is not None:
             residual = self.downsample(x)
 
-        out = out + residual
+        out += residual
         out = self.relu(out)
 
         return out
@@ -120,7 +118,7 @@ class HighResolutionModule(nn.Module):
         self.branches = self._make_branches(
             num_branches, blocks, num_blocks, num_channels)
         self.fuse_layers = self._make_fuse_layers()
-        self.relu = nn.ReLU(inplace=False)
+        self.relu = nn.ReLU(inplace=True)
 
     def _check_branches(self, num_branches, blocks, num_blocks,
                         num_inchannels, num_channels):
@@ -215,7 +213,7 @@ class HighResolutionModule(nn.Module):
                                           3, 2, 1, bias=False),
                                 BatchNorm2d(num_outchannels_conv3x3,
                                             momentum=BN_MOMENTUM),
-                                nn.ReLU(inplace=False)))
+                                nn.ReLU(inplace=True)))
                     fuse_layer.append(nn.Sequential(*conv3x3s))
             fuse_layers.append(nn.ModuleList(fuse_layer))
 
@@ -270,7 +268,7 @@ class HighResolutionNet(nn.Module):
         self.conv2 = nn.Conv2d(64, 64, kernel_size=3, stride=2, padding=1,
                                bias=False)
         self.bn2 = BatchNorm2d(64, momentum=BN_MOMENTUM)
-        self.relu = nn.ReLU(inplace=False)
+        self.relu = nn.ReLU(inplace=True)
 
         self.layer1 = self._make_layer(Bottleneck, 64, 64, 4)
 
@@ -313,7 +311,7 @@ class HighResolutionNet(nn.Module):
                 stride=1,
                 padding=0),
             BatchNorm2d(last_inp_channels, momentum=BN_MOMENTUM),
-            nn.ReLU(inplace=False),
+            nn.ReLU(inplace=True),
             nn.Conv2d(
                 in_channels=last_inp_channels,
                 out_channels=config.DATASET.NUM_CLASSES,
@@ -340,7 +338,7 @@ class HighResolutionNet(nn.Module):
                                   bias=False),
                         BatchNorm2d(
                             num_channels_cur_layer[i], momentum=BN_MOMENTUM),
-                        nn.ReLU(inplace=False)))
+                        nn.ReLU(inplace=True)))
                 else:
                     transition_layers.append(None)
             else:
@@ -353,7 +351,7 @@ class HighResolutionNet(nn.Module):
                         nn.Conv2d(
                             inchannels, outchannels, 3, 2, 1, bias=False),
                         BatchNorm2d(outchannels, momentum=BN_MOMENTUM),
-                        nn.ReLU(inplace=False)))
+                        nn.ReLU(inplace=True)))
                 transition_layers.append(nn.Sequential(*conv3x3s))
 
         return nn.ModuleList(transition_layers)
@@ -424,10 +422,7 @@ class HighResolutionNet(nn.Module):
         x_list = []
         for i in range(self.stage3_cfg['NUM_BRANCHES']):
             if self.transition2[i] is not None:
-                if i < self.stage2_cfg['NUM_BRANCHES']:
-                    x_list.append(self.transition2[i](y_list[i]))
-                else:
-                    x_list.append(self.transition2[i](y_list[-1]))
+                x_list.append(self.transition2[i](y_list[-1]))
             else:
                 x_list.append(y_list[i])
         y_list = self.stage3(x_list)
@@ -435,10 +430,7 @@ class HighResolutionNet(nn.Module):
         x_list = []
         for i in range(self.stage4_cfg['NUM_BRANCHES']):
             if self.transition3[i] is not None:
-                if i < self.stage3_cfg['NUM_BRANCHES']:
-                    x_list.append(self.transition3[i](y_list[i]))
-                else:
-                    x_list.append(self.transition3[i](y_list[-1]))
+                x_list.append(self.transition3[i](y_list[-1]))
             else:
                 x_list.append(y_list[i])
         x = self.stage4(x_list)
@@ -460,7 +452,7 @@ class HighResolutionNet(nn.Module):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.normal_(m.weight, std=0.001)
-            elif isinstance(m, InPlaceABNSync):
+            elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
         if os.path.isfile(pretrained):
@@ -469,9 +461,9 @@ class HighResolutionNet(nn.Module):
             model_dict = self.state_dict()
             pretrained_dict = {k: v for k, v in pretrained_dict.items()
                                if k in model_dict.keys()}
-            for k, _ in pretrained_dict.items():
-                logger.info(
-                    '=> loading {} pretrained model {}'.format(k, pretrained))
+            #for k, _ in pretrained_dict.items():
+            #    logger.info(
+            #        '=> loading {} pretrained model {}'.format(k, pretrained))
             model_dict.update(pretrained_dict)
             self.load_state_dict(model_dict)
 

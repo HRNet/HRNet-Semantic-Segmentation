@@ -49,21 +49,11 @@ class LIP(BaseDataset):
     def read_files(self):
         files = []
         for item in self.img_list:
-            if 'train' in self.list_path:
-                image_path, label_path, label_rev_path, _ = item
-                name = os.path.splitext(os.path.basename(label_path))[0]
-                sample = {"img": image_path,
-                          "label": label_path,
-                          "label_rev": label_rev_path, 
-                          "name": name,}
-            elif 'val' in self.list_path:
-                image_path, label_path = item
-                name = os.path.splitext(os.path.basename(label_path))[0]
-                sample = {"img": image_path,
-                          "label": label_path,
-                          "name": name,}
-            else:
-                raise NotImplementedError('Unknown subset.')
+            image_path, label_path = item[:2]
+            name = os.path.splitext(os.path.basename(label_path))[0]
+            sample = {"img": image_path,
+                      "label": label_path,
+                      "name": name,}
             files.append(sample)
         return files
 
@@ -96,11 +86,16 @@ class LIP(BaseDataset):
         if self.flip:
             flip = np.random.choice(2) * 2 - 1
             image = image[:, ::flip, :] 
+            label = label[:, ::flip]
+
             if flip == -1:
-                label = cv2.imread(os.path.join(self.root, 
-                            'lip/TrainVal_parsing_annotations/', 
-                            item["label_rev"]),
-                            cv2.IMREAD_GRAYSCALE)
+                right_idx = [15, 17, 19]
+                left_idx = [14, 16, 18]
+                for i in range(0, 3):
+                    right_pos = np.where(label == right_idx[i])
+                    left_pos = np.where(label == left_idx[i])
+                    label[right_pos[0], right_pos[1]] = left_idx[i]
+                    label[left_pos[0], left_pos[1]] = right_idx[i]
         
         image, label = self.resize_image(image, label, self.crop_size)
         image, label = self.gen_sample(image, label, 

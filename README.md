@@ -1,5 +1,10 @@
 # High-resolution networks (HRNets) for Semantic Segmentation
 
+## News!!!
+This code is implemented based on Pytorch-v1.1 and adopts the Pytorch official Sync-BN.
+We have reproduced the cityscapes results on this codebase.
+Welcome!!!
+
 ## Introduction
 This is the official code of [high-resolution representations for Semantic Segmentation](https://arxiv.org/abs/1904.04514). 
 We augment the HRNet with a very simple segmentation head shown in the figure below. We aggregate the output representations at four different resolutions, and then use a 1x1 convolutions to fuse these representations. The output representations is fed into the classifier. We evaluate our methods on three datasets, Cityscapes, PASCAL-Context and LIP.
@@ -39,7 +44,7 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 
 
 ## Quick start
 ### Install
-1. Install PyTorch=0.4.1 following the [official instructions](https://pytorch.org/)
+1. Install PyTorch=1.1 following the [official instructions](https://pytorch.org/)
 2. git clone https://github.com/HRNet/HRNet-Semantic-Segmentation $SEG_ROOT
 3. Install dependencies: pip install -r requirements.txt
 
@@ -96,7 +101,7 @@ Please specify the configuration file.
 
 For example, train the HRNet-W48 on Cityscapes with a batch size of 12 on 4 GPUs:
 ````bash
-python tools/train.py --cfg experiments/cityscapes/seg_hrnet_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml
+python -m torch.distributed.launch --nproc_per_node=4 tools/train.py --cfg experiments/cityscapes/seg_hrnet_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml
 ````
 
 For example, evaluating our model on the Cityscapes validation set with multi-scale and flip testing:
@@ -161,6 +166,5 @@ If you find this work or code is helpful in your research, please cite:
 [1] Deep High-Resolution Representation Learning for Human Pose Estimation. Ke Sun, Bin Xiao, Dong Liu, and Jingdong Wang. CVPR 2019. [download](https://arxiv.org/pdf/1902.09212.pdf)
 
 ## Acknowledgement
-We adopt sync-bn implemented by [InplaceABN](https://github.com/mapillary/inplace_abn).
 
 We adopt data precosessing on the PASCAL-Context dataset, implemented by [PASCAL API](https://github.com/zhanghang1989/detail-api).
