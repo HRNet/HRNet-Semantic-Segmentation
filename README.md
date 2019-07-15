@@ -1,5 +1,11 @@
 # High-resolution networks (HRNets) for Semantic Segmentation
 
+## News!!!
+Now, our code support Pytorch-v1.1 and the official Sync-BN.
+We have reproduced the cityscapes results on the new codebase.
+Please check the pytorch-v1.1 branch.
+Welcome!!!
+
 ## Introduction
 This is the official code of [high-resolution representations for Semantic Segmentation](https://arxiv.org/abs/1904.04514). 
 We augment the HRNet with a very simple segmentation head shown in the figure below. We aggregate the output representations at four different resolutions, and then use a 1x1 convolutions to fuse these representations. The output representations is fed into the classifier. We evaluate our methods on three datasets, Cityscapes, PASCAL-Context and LIP.
