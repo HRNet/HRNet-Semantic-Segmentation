@@ -1,11 +1,10 @@
 # High-resolution networks (HRNets) for Semantic Segmentation
 
-## News!!!
+## News
 
 - Rank \#1 (83.7) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). HRNet combined with an extension of [object context](https://arxiv.org/pdf/1809.00916.pdf)
-- Pytorch-v1.1 and the official Sync-BN supported.
-We have reproduced the cityscapes results on the new codebase.
-Please check the pytorch-v1.1 branch.
+
+- Pytorch-v1.1 and the official Sync-BN supported. We have reproduced the cityscapes results on the new codebase. Please check the pytorch-v1.1 branch.
 
 ## Introduction
 This is the official code of [high-resolution representations for Semantic Segmentation](https://arxiv.org/abs/1904.04514). 
