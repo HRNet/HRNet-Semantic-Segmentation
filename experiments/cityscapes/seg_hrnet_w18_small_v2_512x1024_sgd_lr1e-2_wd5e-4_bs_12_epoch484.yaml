@@ -1,0 +1,101 @@
+CUDNN:
+  BENCHMARK: true
+  DETERMINISTIC: false
+  ENABLED: true
+GPUS: (0,1,2,3)
+OUTPUT_DIR: 'output'
+LOG_DIR: 'log'
+WORKERS: 4
+PRINT_FREQ: 100
+
+DATASET:
+  DATASET: cityscapes
+  ROOT: 'data/'
+  TEST_SET: 'list/cityscapes/val.lst'
+  TRAIN_SET: 'list/cityscapes/train.lst'
+  NUM_CLASSES: 19
+MODEL:
+  NAME: seg_hrnet
+  PRETRAINED: 'pretrained_models/hrnet_w18_small_model_v2.pth'
+  EXTRA:
+    FINAL_CONV_KERNEL: 1
+    STAGE1:
+      NUM_MODULES: 1
+      NUM_RANCHES: 1
+      BLOCK: BOTTLENECK
+      NUM_BLOCKS:
+      - 2
+      NUM_CHANNELS:
+      - 64
+      FUSE_METHOD: SUM
+    STAGE2:
+      NUM_MODULES: 1
+      NUM_BRANCHES: 2
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 2
+      - 2
+      NUM_CHANNELS:
+      - 18
+      - 36
+      FUSE_METHOD: SUM
+    STAGE3:
+      NUM_MODULES: 3
+      NUM_BRANCHES: 3
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 2
+      - 2
+      - 2
+      NUM_CHANNELS:
+      - 18
+      - 36
+      - 72
+      FUSE_METHOD: SUM
+    STAGE4:
+      NUM_MODULES: 2
+      NUM_BRANCHES: 4
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 2
+      - 2
+      - 2
+      - 2
+      NUM_CHANNELS:
+      - 18
+      - 36
+      - 72
+      - 144
+      FUSE_METHOD: SUM
+LOSS:
+  USE_OHEM: false
+  OHEMTHRES: 0.9
+  OHEMKEEP: 131072
+TRAIN:
+  IMAGE_SIZE:
+  - 1024
+  - 512
+  BASE_SIZE: 2048
+  BATCH_SIZE_PER_GPU: 3
+  SHUFFLE: true
+  BEGIN_EPOCH: 0
+  END_EPOCH: 484
+  RESUME: true
+  OPTIMIZER: sgd
+  LR: 0.01
+  WD: 0.0005
+  MOMENTUM: 0.9
+  NESTEROV: false
+  FLIP: true
+  MULTI_SCALE: true
+  DOWNSAMPLERATE: 1
+  IGNORE_LABEL: 255
+  SCALE_FACTOR: 16
+TEST:
+  IMAGE_SIZE:
+  - 2048
+  - 1024
+  BASE_SIZE: 2048
+  BATCH_SIZE_PER_GPU: 4
+  FLIP_TEST: false
+  MULTI_SCALE: false
