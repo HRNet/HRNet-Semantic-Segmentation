@@ -52,7 +52,7 @@ The models are initialized by the weights pretrained on the ImageNet. You can do
 1. Performance on the Cityscapes dataset. The models are trained and tested with the input size of 512x1024 and 1024x2048 respectively.
 
 | model | Train Set | Test Set |#Params | GFLOPs | OHEM | Multi-scale| Flip | Distillation | mIoU | Link |
-| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
+| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
 | SQ | Train | Val | - | - | No | No | No | No | 59.8 | |
 | CRF-RNN | Train | Val | - | - | No | No | No | No | 62.5 | |
 | Dilation10 | Train | Val | 140.8 | - | No | No | No | No | 67.1 | |
