@@ -29,6 +29,7 @@ class PASCALContext(BaseDataset):
                  crop_size=(480, 480), 
                  downsample_rate=1,
                  scale_factor=16,
+                 center_crop_test=False,
                  mean=[0.485, 0.456, 0.406], 
                  std=[0.229, 0.224, 0.225],):
     
