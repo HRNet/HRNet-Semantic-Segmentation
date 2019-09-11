@@ -137,7 +137,7 @@ def validate(config, testloader, model, writer_dict, device):
     
 
 def testval(config, test_dataset, testloader, model, 
-        sv_dir='', sv_pred=True):
+        sv_dir='', sv_pred=False):
     model.eval()
     confusion_matrix = np.zeros(
         (config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES))
