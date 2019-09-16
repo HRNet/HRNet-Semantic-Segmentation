@@ -20,7 +20,7 @@ import torch._utils
 import torch.nn.functional as F
 
 BatchNorm2d = nn.BatchNorm2d
-BN_MOMENTUM = 0.1
+BN_MOMENTUM = 0.01
 logger = logging.getLogger(__name__)
 
 def conv3x3(in_planes, out_planes, stride=1):
