@@ -125,7 +125,7 @@ Please specify the configuration file.
 
 For example, train the HRNet-W48 on Cityscapes with a batch size of 12 on 4 GPUs:
 ````bash
-python tools/train.py --cfg experiments/cityscapes/seg_hrnet_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml
+python -m torch.distributed.launch --nproc_per_node=4 tools/train.py --cfg experiments/cityscapes/seg_hrnet_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml
 ````
 
 For example, evaluating our model on the Cityscapes validation set with multi-scale and flip testing:
