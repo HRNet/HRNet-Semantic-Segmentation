@@ -1,7 +1,8 @@
 # High-resolution networks (HRNets) for Semantic Segmentation
 
 ## News
-- Small HRNet models for Cityscapes segmentation. Superior to MobileNetV2Plus...
+- Thanks Google and UIUC researchers. A modified HRNet combined with semantic and instance multi-scale context achieves SOTA panoptic segmentation result on the Mapillary Vista challenge. See [the paper](https://arxiv.org/pdf/1910.04751.pdf).
+- Small HRNet models for Cityscapes segmentation. Superior to MobileNetV2Plus ....
 - Rank \#1 (83.7) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). HRNet combined with an extension of [object context](https://arxiv.org/pdf/1809.00916.pdf)
 
 - Pytorch-v1.1 and the official Sync-BN supported. We have reproduced the cityscapes results on the new codebase. Please check the pytorch-v1.1 branch.
