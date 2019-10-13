@@ -24,26 +24,13 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75.
 
 | model | Train Set | Test Set |#Params | GFLOPs | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | Train | Val | 65.8M | 696.2 | No | No | No | 81.1 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33fs5grbbxDe5rh0E?e=08eaVv)/[BaiduYun(Access Code:vxrk)](https://pan.baidu.com/s/1707pAkNlkZzKWgXhtovLAQ)|
-| HRNetV2-W48 | Train | Val |65.8M | 696.2 | Yes | No | No | 81.2 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQJqzjdjG_zBfQG8)/[BaiduYun(Access Code:794r)](https://pan.baidu.com/s/1BOOLKeQVde3MTeKAM_H5Nw)|
-| HRNetV2-W48 | Train | Test | 65.8M | 696.2 | No | Yes | Yes | [80.5](https://www.cityscapes-dataset.com/anonymous-results/?id=5929dc821f480d298646572d5a5c1ab0206b94347a720d3d0e0efefa5b3c5026) | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33fs5grbbxDe5rh0E?e=08eaVv)/[BaiduYun(Access Code:vxrk)](https://pan.baidu.com/s/1707pAkNlkZzKWgXhtovLAQ)|
-| HRNetV2-W48 | Train | Test |65.8M | 696.2 | Yes | Yes | Yes | [81.1](https://www.cityscapes-dataset.com/anonymous-results/?id=7c9d053cff143a4293fec6edea4fb7eb8c0cbe98d3e0dc62e2b1a89949bc4307) | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQJqzjdjG_zBfQG8)/[BaiduYun(Access Code:794r)](https://pan.baidu.com/s/1BOOLKeQVde3MTeKAM_H5Nw)|
-| HRNetV2-W48 | TrainVal | Test |65.8M | 696.2 | No | Yes | Yes | [81.5](https://www.cityscapes-dataset.com/anonymous-results/?id=860a48272386915f3f950916bde8fc3fabc4161985850b97942c1fd94eaa96bd) | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQUhU4Id4_nc1Vcx)/[BaiduYun(Access Code:pbai)](https://pan.baidu.com/s/1nlBVeGNszdl5c6kg8NVjiw)|
-| HRNetV2-W48 | TrainVal | Test |65.8M | 696.2 | Yes | Yes | Yes | [81.9](https://www.cityscapes-dataset.com/anonymous-results/?id=592db8db303bf97dc251419c7fa0d88846ca322d539c30228fc341ca6789c524) | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQMJK-zkWjK6V7gE)/[BaiduYun(Access Code:qett)](https://pan.baidu.com/s/1OVHLJ8LbySMYo2yn6ZEqAA)|
+| HRNetV2-W48 | Train | Val | 65.8M | 696.2 | No | No | No | 81.1 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gSfA0nHNNqdCx99W?e=vfwYfo)/[BaiduYun(Access Code:t6ri)](https://pan.baidu.com/s/1GXNPm5_DuzVVoKob2pZguA)|
 
 2. Performance on the LIP dataset. The models are trained and tested with the input size of 473x473.
 
 | model |#Params | GFLOPs | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | 65.8M | 74.3 | No | No | Yes | 56.04 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQBEDbyqhH5SMQld)/[BaiduYun(Access Code:mjw3)](https://pan.baidu.com/s/1vJD6R47MiVzn9r_VyC5t1g)|
-
-3. Performance on the PASCAL-Context dataset. The models are trained and tested with the input size of 480x480.
-If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 (the same as EncNet, DANet etc.).
-
-| model |num classes |#Params | GFLOPs | OHEM | Multi-scale| Flip | mIoU | Link |
-| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | 59 classes |65.8M | 76.5 | No | Yes | Yes | 54.1 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33f5Bfbt4KmLeX8uw)/[BaiduYun(Access Code:53fj)](https://pan.baidu.com/s/1h24CgCWpkxt2W6MonrM-dQ)|
-| HRNetV2-W48 | 60 classes | 65.8M | 76.5 | No | Yes | Yes | 48.3 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQEHDQrZCiv4R5mf)/[BaiduYun(Access Code:9uf8)](https://pan.baidu.com/s/1pgYt8P8ht2HOOzcA0F7Kag)|
+| HRNetV2-W48 | 65.8M | 74.3 | No | No | Yes | 55.82 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gSjZUHtqfojPfBc6?e=4sE90v)/[BaiduYun(Access Code:sbgy)](https://pan.baidu.com/s/17LAPB-7wsGFPVpHF51tI-w)|
 
 ### Small models
 
