@@ -24,7 +24,7 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75.
 
 | model | Train Set | Test Set |#Params | GFLOPs | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | Train | Val | 65.8M | 696.2 | No | No | No | 81.1 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gSfA0nHNNqdCx99W?e=vfwYfo)/[BaiduYun(Access Code:t6ri)](https://pan.baidu.com/s/1GXNPm5_DuzVVoKob2pZguA)|
+| HRNetV2-W48 | Train | Val | 65.8M | 696.2 | No | No | No | 81.1 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gSlK7Fju_sXCxFUt?e=WZ96Ck)/[BaiduYun(Access Code:t6ri)](https://pan.baidu.com/s/1GXNPm5_DuzVVoKob2pZguA)|
 
 2. Performance on the LIP dataset. The models are trained and tested with the input size of 473x473.
 
