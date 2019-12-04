@@ -10,12 +10,12 @@ PRINT_FREQ: 100
 
 DATASET:
   DATASET: cityscapes
-  ROOT: /datadrive/HRNet-Semantic-Segmentation-pytorch-v1.1/data/
+  ROOT: data/
   TEST_SET: 'list/cityscapes/val.lst'
   TRAIN_SET: 'list/cityscapes/train.lst'
   NUM_CLASSES: 19
 MODEL:
-  NAME: seg_hrnet_ocr_bndefault_alignTrue
+  NAME: seg_hrnet_ocr_bndefault_alignTrue_3x3
   PRETRAINED: "/datadrive/HRNet-Semantic-Segmentation-pytorch-v1.1/pretrained_models/hrnetv2_w48_imagenet_pretrained.pth"
   EXTRA:
     FINAL_CONV_KERNEL: 1
