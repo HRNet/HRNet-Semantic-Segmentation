@@ -40,6 +40,7 @@ def parse_args():
                         help='experiment configure file name',
                         required=True,
                         type=str)
+    parser.add_argument('--seed', type=int, default=304)
     parser.add_argument('opts',
                         help="Modify config options using the command-line",
                         default=None,
@@ -52,6 +53,12 @@ def parse_args():
 
 def main():
     args = parse_args()
+
+    if args.seed > 0:
+        import random
+        print('Seeding with', args.seed)
+        random.seed(args.seed)
+        torch.manual_seed(args.seed)        
 
     logger, final_output_dir, tb_log_dir = create_logger(
         config, args.cfg, 'train')
