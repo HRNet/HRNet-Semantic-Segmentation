@@ -391,7 +391,7 @@ class HighResolutionModule(nn.Module):
                     y = y + F.interpolate(
                         self.fuse_layers[i][j](x[j]),
                         size=[height_output, width_output],
-                        mode='bilinear')
+                        mode='bilinear', align_corners=True)
                 else:
                     y = y + self.fuse_layers[i][j](x[j])
             x_fuse.append(self.relu(y))
@@ -624,9 +624,9 @@ class HighResolutionNet(nn.Module):
 
         # Upsampling
         x0_h, x0_w = x[0].size(2), x[0].size(3)
-        x1 = F.upsample(x[1], size=(x0_h, x0_w), mode='bilinear')
-        x2 = F.upsample(x[2], size=(x0_h, x0_w), mode='bilinear')
-        x3 = F.upsample(x[3], size=(x0_h, x0_w), mode='bilinear')
+        x1 = F.upsample(x[1], size=(x0_h, x0_w), mode='bilinear', align_corners=True)
+        x2 = F.upsample(x[2], size=(x0_h, x0_w), mode='bilinear', align_corners=True)
+        x3 = F.upsample(x[3], size=(x0_h, x0_w), mode='bilinear', align_corners=True)
 
         
 
