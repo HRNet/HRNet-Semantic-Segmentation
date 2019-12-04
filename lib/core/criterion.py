@@ -56,3 +56,42 @@ class OhemCrossEntropy(nn.Module):
         pixel_losses = pixel_losses[mask][ind]
         pixel_losses = pixel_losses[pred < threshold] 
         return pixel_losses.mean()
+        
+        
+        
+        
+class CrossEntropy_AUX(nn.Module):
+    def __init__(self, ignore_label=-1, weight=None,model_name=None):
+        super(CrossEntropy_AUX, self).__init__()
+        self.ignore_label = ignore_label
+        self.criterion0 = nn.CrossEntropyLoss(weight=weight, 
+                                             ignore_index=ignore_label)
+        self.criterion1 = nn.CrossEntropyLoss(weight=weight, 
+                                             ignore_index=ignore_label)
+        self.model_name=model_name
+
+    def forward(self, score, target):
+        score_aux = score[0]
+        score_seg = score[1]
+        ph0, pw0 = score_aux.size(2), score_aux.size(3)
+        ph1, pw1 = score_seg.size(2), score_seg.size(3)
+        
+        h, w = target.size(1), target.size(2)
+        if ph0 != h or pw0 != w:
+            if "align" in self.model_name:
+                score_aux = F.upsample(
+                    input=score_aux, size=(h, w), mode='bilinear', align_corners=True)
+            else:
+                score_aux = F.upsample(
+                    input=score_aux, size=(h, w), mode='bilinear')
+        if ph1 != h or pw1 != w:
+            if "align" in self.model_name:
+                score_seg = F.upsample(
+                    input=score_seg, size=(h, w), mode='bilinear', align_corners=True)
+            else:
+                score_seg = F.upsample(
+                    input=score_seg, size=(h, w), mode='bilinear')
+
+        loss = 0.4 * self.criterion0(score_aux, target) + 1.0 * self.criterion1(score_seg, target)
+
+        return loss

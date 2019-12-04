@@ -75,8 +75,15 @@ def validate(config, testloader, model, writer_dict):
             label = label.long().cuda()
 
             losses, pred = model(image, label)
-            pred = F.upsample(input=pred, size=(
+            if "ocr" in config.MODEL.NAME:  
+                pred = pred[1]
+            if "align" in config.MODEL.NAME:  
+                pred = F.upsample(input=pred, size=(
+                        size[-2], size[-1]), mode='bilinear', align_corners=True)
+            else:
+                pred = F.upsample(input=pred, size=(
                         size[-2], size[-1]), mode='bilinear')
+            
             loss = losses.mean()
             ave_loss.update(loss.item())
 
@@ -116,9 +123,16 @@ def testval(config, test_dataset, testloader, model,
                         flip=config.TEST.FLIP_TEST)
             
             if pred.size()[-2] != size[-2] or pred.size()[-1] != size[-1]:
-                pred = F.upsample(pred, (size[-2], size[-1]), 
+                
+                if "align" in config.MODEL.NAME:  
+                    pred = F.upsample(pred, (size[-2], size[-1]), 
+                                   mode='bilinear', align_corners=True)
+               
+                else:
+                    pred = F.upsample(pred, (size[-2], size[-1]), 
                                    mode='bilinear')
-
+                
+               
             confusion_matrix += get_confusion_matrix(
                 label,
                 pred,
@@ -165,8 +179,16 @@ def test(config, test_dataset, testloader, model,
                         flip=config.TEST.FLIP_TEST)
             
             if pred.size()[-2] != size[0] or pred.size()[-1] != size[1]:
-                pred = F.upsample(pred, (size[-2], size[-1]), 
+                if "align" in config.MODEL.NAME:  
+                    pred = F.upsample(pred, (size[-2], size[-1]), 
+                                   mode='bilinear', align_corners=True)
+               
+                else:
+                    pred = F.upsample(pred, (size[-2], size[-1]), 
                                    mode='bilinear')
+                
+                
+                
 
             if sv_pred:
                 sv_path = os.path.join(sv_dir,'test_results')

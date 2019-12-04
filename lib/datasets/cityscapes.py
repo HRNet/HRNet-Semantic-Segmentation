@@ -119,7 +119,7 @@ class Cityscapes(BaseDataset):
 
         return image.copy(), label.copy(), np.array(size), name
 
-    def multi_scale_inference(self, model, image, scales=[1], flip=False):
+    def multi_scale_inference(self, config, model, image, scales=[1], flip=False):
         batch, _, ori_height, ori_width = image.size()
         assert batch == 1, "only supporting batchsize 1."
         image = image.numpy()[0].transpose((1,2,0)).copy()
@@ -137,7 +137,7 @@ class Cityscapes(BaseDataset):
                 new_img = new_img.transpose((2, 0, 1))
                 new_img = np.expand_dims(new_img, axis=0)
                 new_img = torch.from_numpy(new_img)
-                preds = self.inference(model, new_img, flip)
+                preds = self.inference(config, model, new_img, flip)
                 preds = preds[:, :, 0:height, 0:width]
             else:
                 new_h, new_w = new_img.shape[:-1]
@@ -161,13 +161,19 @@ class Cityscapes(BaseDataset):
                         crop_img = crop_img.transpose((2, 0, 1))
                         crop_img = np.expand_dims(crop_img, axis=0)
                         crop_img = torch.from_numpy(crop_img)
-                        pred = self.inference(model, crop_img, flip)
+                        pred = self.inference(config, model, crop_img, flip)
                         preds[:,:,h0:h1,w0:w1] += pred[:,:, 0:h1-h0, 0:w1-w0]
                         count[:,:,h0:h1,w0:w1] += 1
                 preds = preds / count
                 preds = preds[:,:,:height,:width]
-            preds = F.upsample(preds, (ori_height, ori_width), 
+            
+            if "align" in config.MODEL.NAME:  
+                preds = F.upsample(preds, (ori_height, ori_width), 
+                                   mode='bilinear', align_corners=True)
+            else:
+                preds = F.upsample(preds, (ori_height, ori_width), 
                                    mode='bilinear')
+            
             final_pred += preds
         return final_pred
 

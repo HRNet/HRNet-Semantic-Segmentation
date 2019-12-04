@@ -28,7 +28,7 @@ import models
 import datasets
 from config import config
 from config import update_config
-from core.criterion import CrossEntropy, OhemCrossEntropy
+from core.criterion import CrossEntropy, OhemCrossEntropy, CrossEntropy_AUX
 from core.function import train, validate
 from utils.modelsummary import get_model_summary
 from utils.utils import create_logger, FullModel
@@ -153,14 +153,19 @@ def main():
         pin_memory=True)
 
     # criterion
-    if config.LOSS.USE_OHEM:
-        criterion = OhemCrossEntropy(ignore_label=config.TRAIN.IGNORE_LABEL,
-                                     thres=config.LOSS.OHEMTHRES,
-                                     min_kept=config.LOSS.OHEMKEEP,
+    if "ocr" in config.MODEL.NAME: 
+        print("Use ocr aux loss!!!")
+        criterion = CrossEntropy_AUX(ignore_label=config.TRAIN.IGNORE_LABEL,
+                                 weight=train_dataset.class_weights,model_name=config.MODEL.NAME)
+    else:      
+        if config.LOSS.USE_OHEM:
+            criterion = OhemCrossEntropy(ignore_label=config.TRAIN.IGNORE_LABEL,
+                                         thres=config.LOSS.OHEMTHRES,
+                                         min_kept=config.LOSS.OHEMKEEP,
+                                         weight=train_dataset.class_weights)
+        else:
+            criterion = CrossEntropy(ignore_label=config.TRAIN.IGNORE_LABEL,
                                      weight=train_dataset.class_weights)
-    else:
-        criterion = CrossEntropy(ignore_label=config.TRAIN.IGNORE_LABEL,
-                                 weight=train_dataset.class_weights)
 
     model = FullModel(model, criterion)
     model = nn.DataParallel(model, device_ids=gpus).cuda()
