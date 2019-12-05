@@ -133,7 +133,7 @@ def main():
         num_workers=config.WORKERS,
         pin_memory=True,
         drop_last=True,
-        sampler=sampler)
+        sampler=train_sampler)
 
     if config.DATASET.EXTRA_TRAIN_SET:
         extra_train_dataset = eval('datasets.'+config.DATASET.DATASET)(
@@ -156,7 +156,7 @@ def main():
             num_workers=config.WORKERS,
             pin_memory=True,
             drop_last=True,
-            sampler=sampler)
+            sampler=extra_train_sampler)
 
     test_size = (config.TEST.IMAGE_SIZE[1], config.TEST.IMAGE_SIZE[0])
     test_dataset = eval('datasets.'+config.DATASET.DATASET)(
@@ -178,7 +178,7 @@ def main():
         shuffle=False,
         num_workers=config.WORKERS,
         pin_memory=True,
-        sampler=sampler)
+        sampler=test_sampler)
 
     # criterion
     if "ocr" in config.MODEL.NAME: 
