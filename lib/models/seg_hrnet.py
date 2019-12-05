@@ -24,7 +24,6 @@ if torch.__version__.startswith('0'):
     from .sync_bn.inplace_abn.bn import InPlaceABNSync
     BatchNorm2d = functools.partial(InPlaceABNSync, activation='none')
 else:
-    from .sync_bn.inplace_abn.bn import InPlaceABNSync
     BatchNorm2d = torch.nn.SyncBatchNormBN_MOMENTUM = 0.01
 logger = logging.getLogger(__name__)
 
