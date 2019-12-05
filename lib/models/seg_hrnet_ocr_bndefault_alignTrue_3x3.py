@@ -37,7 +37,7 @@ class ModuleHelper:
     def BNReLU(num_features, bn_type=None, **kwargs):
         return nn.Sequential(
             BatchNorm2d(num_features, **kwargs),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=relu_inplace)
         )
 
     @staticmethod
