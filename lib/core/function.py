@@ -20,7 +20,7 @@ from utils.utils import AverageMeter
 from utils.utils import get_confusion_matrix
 from utils.utils import adjust_learning_rate
 
-import lib.distributed as dist
+import distributed as dist
 
 def reduce_tensor(inp):
     """
