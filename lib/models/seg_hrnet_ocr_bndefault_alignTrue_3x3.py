@@ -24,7 +24,8 @@ if torch.__version__.startswith('0'):
     BatchNorm2d = functools.partial(InPlaceABNSync, activation='none')
     relu_inplace = False
 else:
-    BatchNorm2d = torch.nn.SyncBatchNormBN_MOMENTUM = 0.01
+    BatchNorm2d = torch.nn.SyncBatchNorm
+    BN_MOMENTUM = 0.01
     relu_inplace = True
 
 BN_MOMENTUM = 0.1
