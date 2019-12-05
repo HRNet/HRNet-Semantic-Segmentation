@@ -27,7 +27,7 @@ if torch.__version__.startswith('0'):
 else:
     BatchNorm2d_class = BatchNorm2d = torch.nn.SyncBatchNorm
     relu_inplace = True
-
+print('relu_inplace', relu_inplace)
 BN_MOMENTUM = 0.1
 logger = logging.getLogger(__name__)
 
