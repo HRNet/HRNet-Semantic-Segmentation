@@ -32,7 +32,7 @@ def reduce_tensor(inp):
         return inp
     with torch.no_grad():
         reduced_inp = inp
-        dist.reduce(reduced_inp, dst=0)
+        torch.distributed.reduce(reduced_inp, dst=0)
     return reduced_inp / world_size
 
 def train(config, epoch, num_epoch, epoch_iters, base_lr, 
