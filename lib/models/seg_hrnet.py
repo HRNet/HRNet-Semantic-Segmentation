@@ -21,8 +21,11 @@ import torch.nn.functional as F
 
 from .sync_bn.inplace_abn.bn import InPlaceABNSync
 
-BatchNorm2d = functools.partial(InPlaceABNSync, activation='none')
-BN_MOMENTUM = 0.01
+if torch.__version__.startswith('0'):
+    from .sync_bn.inplace_abn.bn import InPlaceABNSync
+    BatchNorm2d = functools.partial(InPlaceABNSync, activation='none')
+else:
+    BatchNorm2d = torch.nn.SyncBatchNormBN_MOMENTUM = 0.01
 logger = logging.getLogger(__name__)
 
 def conv3x3(in_planes, out_planes, stride=1):
