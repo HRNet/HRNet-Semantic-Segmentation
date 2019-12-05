@@ -121,7 +121,7 @@ def validate(config, testloader, model, writer_dict):
                 config.TRAIN.IGNORE_LABEL)
 
     if dist.is_distributed():
-        confusion_matrix = torch.from_numpy(confusion_matrix).to(device)
+        confusion_matrix = torch.from_numpy(confusion_matrix).cuda()
         reduced_confusion_matrix = reduce_tensor(confusion_matrix)
         confusion_matrix = reduced_confusion_matrix.cpu().numpy()
 
