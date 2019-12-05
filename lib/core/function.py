@@ -20,6 +20,21 @@ from utils.utils import AverageMeter
 from utils.utils import get_confusion_matrix
 from utils.utils import adjust_learning_rate
 
+import lib.distributed as dist
+
+def reduce_tensor(inp):
+    """
+    Reduce the loss from all processes so that 
+    process with rank 0 has the averaged results.
+    """
+    world_size = get_world_size()
+    if world_size < 2:
+        return inp
+    with torch.no_grad():
+        reduced_inp = inp
+        dist.reduce(reduced_inp, dst=0)
+    return reduced_inp / dist.get_world_size()
+
 def train(config, epoch, num_epoch, epoch_iters, base_lr, 
         num_iters, trainloader, optimizer, model, writer_dict):
     # Training
@@ -32,10 +47,16 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
     global_steps = writer_dict['train_global_steps']
     for i_iter, batch in enumerate(trainloader, 0):
         images, labels, _, _ = batch
+        images = images.cuda()
         labels = labels.long().cuda()
 
         losses, _ = model(images, labels)
         loss = losses.mean()
+
+        if dist.is_distributed():
+            reduced_loss = reduce_tensor(loss)
+        else:
+            reduced_loss = loss
 
         model.zero_grad()
         loss.backward()
@@ -46,14 +67,14 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
         tic = time.time()
 
         # update average loss
-        ave_loss.update(loss.item())
+        ave_loss.update(reduced_loss.item())
 
         lr = adjust_learning_rate(optimizer,
                                   base_lr,
                                   num_iters,
                                   i_iter+cur_iters)
 
-        if i_iter % config.PRINT_FREQ == 0:
+        if i_iter % config.PRINT_FREQ == 0 and dist.get_rank() == 0:
             msg = 'Epoch: [{}/{}] Iter:[{}/{}], Time: {:.2f}, ' \
                   'lr: {:.6f}, Loss: {:.6f}' .format(
                       epoch, num_epoch, i_iter, epoch_iters, 
@@ -72,6 +93,7 @@ def validate(config, testloader, model, writer_dict):
         for _, batch in enumerate(testloader):
             image, label, _, _ = batch
             size = label.size()
+            image = image.cuda()
             label = label.long().cuda()
 
             losses, pred = model(image, label)
@@ -85,7 +107,11 @@ def validate(config, testloader, model, writer_dict):
                         size[-2], size[-1]), mode='bilinear')
             
             loss = losses.mean()
-            ave_loss.update(loss.item())
+            if dist.is_distributed():
+                reduced_loss = reduce_tensor(loss)
+            else:
+                reduced_loss = loss            
+            ave_loss.update(reduced_loss.item())
 
             confusion_matrix += get_confusion_matrix(
                 label,
@@ -93,6 +119,11 @@ def validate(config, testloader, model, writer_dict):
                 size,
                 config.DATASET.NUM_CLASSES,
                 config.TRAIN.IGNORE_LABEL)
+
+    if dist.is_distributed():
+        confusion_matrix = torch.from_numpy(confusion_matrix).to(device)
+        reduced_confusion_matrix = reduce_tensor(confusion_matrix)
+        confusion_matrix = reduced_confusion_matrix.cpu().numpy()
 
     pos = confusion_matrix.sum(1)
     res = confusion_matrix.sum(0)
