@@ -22,10 +22,10 @@ import torch.nn.functional as F
 if torch.__version__.startswith('0'):
     from .sync_bn.inplace_abn.bn import InPlaceABNSync
     BatchNorm2d = functools.partial(InPlaceABNSync, activation='none')
+    BatchNorm2d_class = InPlaceABNSync
     relu_inplace = False
 else:
-    BatchNorm2d = torch.nn.SyncBatchNorm
-    BN_MOMENTUM = 0.01
+    BatchNorm2d_class = BatchNorm2d = torch.nn.SyncBatchNorm
     relu_inplace = True
 
 BN_MOMENTUM = 0.1
@@ -743,7 +743,7 @@ class HighResolutionNet(nn.Module):
                 continue
             if isinstance(m, nn.Conv2d):
                 nn.init.normal_(m.weight, std=0.001)
-            elif isinstance(m, InPlaceABNSync):
+            elif isinstance(m, BatchNorm2d_class):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
         if os.path.isfile(pretrained):
