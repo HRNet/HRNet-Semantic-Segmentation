@@ -90,7 +90,7 @@ def validate(config, testloader, model, writer_dict):
     confusion_matrix = np.zeros(
         (config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES))
     with torch.no_grad():
-        for _, batch in enumerate(testloader):
+        for idx, batch in enumerate(testloader):
             image, label, _, _ = batch
             size = label.size()
             image = image.cuda()
