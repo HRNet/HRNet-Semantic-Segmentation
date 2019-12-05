@@ -27,13 +27,13 @@ def reduce_tensor(inp):
     Reduce the loss from all processes so that 
     process with rank 0 has the averaged results.
     """
-    world_size = get_world_size()
+    world_size = dist.get_world_size()
     if world_size < 2:
         return inp
     with torch.no_grad():
         reduced_inp = inp
         dist.reduce(reduced_inp, dst=0)
-    return reduced_inp / dist.get_world_size()
+    return reduced_inp / world_size
 
 def train(config, epoch, num_epoch, epoch_iters, base_lr, 
         num_iters, trainloader, optimizer, model, writer_dict):
