@@ -104,11 +104,12 @@ def main():
     # logger.info(get_model_summary(model.cuda(), dump_input.cuda()))
 
     # copy model file
-    this_dir = os.path.dirname(__file__)
-    models_dst_dir = os.path.join(final_output_dir, 'models')
-    if os.path.exists(models_dst_dir):
-        shutil.rmtree(models_dst_dir)
-    shutil.copytree(os.path.join(this_dir, '../lib/models'), models_dst_dir)
+    if distributed and args.local_rank == 0:
+        this_dir = os.path.dirname(__file__)
+        models_dst_dir = os.path.join(final_output_dir, 'models')
+        if os.path.exists(models_dst_dir):
+            shutil.rmtree(models_dst_dir)
+        shutil.copytree(os.path.join(this_dir, '../lib/models'), models_dst_dir)
 
     if distributed:
         batch_size = config.TRAIN.BATCH_SIZE_PER_GPU
