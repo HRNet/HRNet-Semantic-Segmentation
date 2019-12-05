@@ -256,6 +256,9 @@ def main():
         if current_trainloader.sampler is not None and hasattr(current_trainloader.sampler, 'set_epoch'):
             current_trainloader.sampler.set_epoch(epoch)
 
+        valid_loss, mean_IoU, IoU_array = validate(config, 
+                    testloader, model, writer_dict)
+
         if epoch >= config.TRAIN.END_EPOCH:
             train(config, epoch-config.TRAIN.END_EPOCH, 
                   config.TRAIN.EXTRA_EPOCH, epoch_iters, 
@@ -265,6 +268,9 @@ def main():
             train(config, epoch, config.TRAIN.END_EPOCH, 
                   epoch_iters, config.TRAIN.LR, num_iters,
                   trainloader, optimizer, model, writer_dict)
+
+        valid_loss, mean_IoU, IoU_array = validate(config, 
+                    testloader, model, writer_dict)
 
         if args.local_rank <= 0:
             logger.info('=> saving checkpoint to {}'.format(
