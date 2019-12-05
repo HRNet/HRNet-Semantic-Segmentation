@@ -129,7 +129,7 @@ def main():
     trainloader = torch.utils.data.DataLoader(
         train_dataset,
         batch_size=config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus),
-        shuffle=config.TRAIN.SHUFFLE and train_sampler is not None,
+        shuffle=config.TRAIN.SHUFFLE and train_sampler is None,
         num_workers=config.WORKERS,
         pin_memory=True,
         drop_last=True,
@@ -152,7 +152,7 @@ def main():
         extra_trainloader = torch.utils.data.DataLoader(
             extra_train_dataset,
             batch_size=config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus),
-            shuffle=config.TRAIN.SHUFFLE and extra_train_sampler is not None,
+            shuffle=config.TRAIN.SHUFFLE and extra_train_sampler is None,
             num_workers=config.WORKERS,
             pin_memory=True,
             drop_last=True,
