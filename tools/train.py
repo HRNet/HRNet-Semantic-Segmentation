@@ -90,6 +90,9 @@ def main():
     if distributed:
         device = torch.device('cuda:{}'.format(args.local_rank))    
         torch.cuda.set_device(device)
+        torch.distributed.init_process_group(
+            backend="nccl", init_method="env://",
+        )        
 
     # build model
     model = eval('models.'+config.MODEL.NAME +
