@@ -110,6 +110,11 @@ def main():
         shutil.rmtree(models_dst_dir)
     shutil.copytree(os.path.join(this_dir, '../lib/models'), models_dst_dir)
 
+    if distributed:
+        batch_size = config.TRAIN.BATCH_SIZE_PER_GPU
+    else:
+        batch_size = config.TRAIN.BATCH_SIZE_PER_GPU * len(gpus)
+
     # prepare data
     crop_size = (config.TRAIN.IMAGE_SIZE[1], config.TRAIN.IMAGE_SIZE[0])
     train_dataset = eval('datasets.'+config.DATASET.DATASET)(
@@ -128,12 +133,13 @@ def main():
     train_sampler = get_sampler(train_dataset)
     trainloader = torch.utils.data.DataLoader(
         train_dataset,
-        batch_size=config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus),
+        batch_size=batch_size,
         shuffle=config.TRAIN.SHUFFLE and train_sampler is None,
         num_workers=config.WORKERS,
         pin_memory=True,
         drop_last=True,
         sampler=train_sampler)
+
 
     if config.DATASET.EXTRA_TRAIN_SET:
         extra_train_dataset = eval('datasets.'+config.DATASET.DATASET)(
@@ -151,7 +157,7 @@ def main():
         extra_train_sampler = get_sampler(extra_train_dataset)
         extra_trainloader = torch.utils.data.DataLoader(
             extra_train_dataset,
-            batch_size=config.TRAIN.BATCH_SIZE_PER_GPU*len(gpus),
+            batch_size=batch_size,
             shuffle=config.TRAIN.SHUFFLE and extra_train_sampler is None,
             num_workers=config.WORKERS,
             pin_memory=True,
@@ -174,7 +180,7 @@ def main():
     test_sampler = get_sampler(test_dataset)
     testloader = torch.utils.data.DataLoader(
         test_dataset,
-        batch_size=config.TEST.BATCH_SIZE_PER_GPU*len(gpus),
+        batch_size=batch_size,
         shuffle=False,
         num_workers=config.WORKERS,
         pin_memory=True,
@@ -223,6 +229,7 @@ def main():
 
     epoch_iters = np.int(train_dataset.__len__() / 
                         config.TRAIN.BATCH_SIZE_PER_GPU / len(gpus))
+        
     best_mIoU = 0
     last_epoch = 0
     if config.TRAIN.RESUME:
