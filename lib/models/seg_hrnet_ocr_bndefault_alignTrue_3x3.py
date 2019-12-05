@@ -19,6 +19,7 @@ import torch.nn as nn
 import torch._utils
 import torch.nn.functional as F
 
+print(torch.__version__)
 if torch.__version__.startswith('0'):
     from .sync_bn.inplace_abn.bn import InPlaceABNSync
     BatchNorm2d = functools.partial(InPlaceABNSync, activation='none')
