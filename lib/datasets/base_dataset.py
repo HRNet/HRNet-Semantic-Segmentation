@@ -98,6 +98,19 @@ class BaseDataset(data.Dataset):
         
         return image, label
 
+    def random_brightness(self, img):
+        self.shift_value = 10
+        if not os.environ.get('random_brightness'):
+            return img
+        if random.random() < 0.5:
+            return img
+        img = img.astype(np.float32)
+        shift = random.randint(-self.shift_value, self.shift_value)
+        img[:, :, :] += shift
+        img = np.around(img)
+        img = np.clip(img, 0, 255).astype(np.uint8)        
+        return img
+
     def gen_sample(self, image, label, 
             multi_scale=True, is_flip=True):
         if multi_scale:
@@ -114,6 +127,8 @@ class BaseDataset(data.Dataset):
             flip = np.random.choice(2) * 2 - 1
             image = image[:, :, ::flip]
             label = label[:, ::flip]
+
+        image = self.random_brightness(image)
 
         if self.downsample_rate != 1:
             label = cv2.resize(label, 
