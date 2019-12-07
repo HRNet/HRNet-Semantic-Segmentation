@@ -129,7 +129,12 @@ class BaseDataset(data.Dataset):
         pred = model(image)
         
         if "ocr" in config.MODEL.NAME:  
-            pred = pred[1]
+            import os
+            if os.environ.get('eval_dsn'):
+                idx = 0
+            else:
+                idx = 1
+            pred = pred[idx]
         
         if "align" in config.MODEL.NAME:  
             pred = F.upsample(input=pred, 
