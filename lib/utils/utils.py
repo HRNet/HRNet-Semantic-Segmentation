@@ -156,4 +156,6 @@ def adjust_learning_rate(optimizer, base_lr, max_iters,
         cur_iters, power=0.9):
     lr = base_lr*((1-float(cur_iters)/max_iters)**(power))
     optimizer.param_groups[0]['lr'] = lr
+    if len(optimizer.param_groups) == 2:
+        optimizer.param_groups[1]['lr'] = lr * 10
     return lr
