@@ -75,7 +75,8 @@ class LIP(BaseDataset):
     def __getitem__(self, index):
         item = self.files[index]
         name = item["name"]
-         
+        item["img"]=item["img"].replace("train_images","LIP_Train").replace("val_images","LIP_Val")
+        item["label"]=item["label"].replace("train_segmentations","LIP_Train").replace("val_segmentations","LIP_Val")         
         image = cv2.imread(os.path.join(
                     self.root, 'lip/TrainVal_images/', item["img"]), 
                     cv2.IMREAD_COLOR)
