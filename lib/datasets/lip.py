@@ -114,16 +114,37 @@ class LIP(BaseDataset):
 
         return image.copy(), label.copy(), np.array(size), name
 
-    def inference(self, model, image, flip):
+    def inference(self, config, model, image, flip):
         size = image.size()
         pred = model(image)
-        pred = F.upsample(input=pred, 
-                          size=(size[-2], size[-1]), 
-                          mode='bilinear')        
+        if "ocr" in config.MODEL.NAME:  
+            import os
+            if os.environ.get('eval_dsn'):
+                idx = 0
+            else:
+                idx = 1
+            pred = pred[idx]
+        
+        if "align" in config.MODEL.NAME:  
+            pred = F.upsample(input=pred, 
+                            size=(size[-2], size[-1]), 
+                            mode='bilinear', align_corners=True)
+        else:
+            pred = F.upsample(input=pred, 
+                            size=(size[-2], size[-1]), 
+                            mode='bilinear')   
+           
         if flip:
             flip_img = image.numpy()[:,:,:,::-1]
             flip_output = model(torch.from_numpy(flip_img.copy()))
-            flip_output = F.upsample(input=flip_output, 
+            if "ocr" in config.MODEL.NAME:  
+                flip_output = flip_output[1]
+            if "align" in config.MODEL.NAME:  
+                flip_output = F.upsample(input=flip_output, 
+                            size=(size[-2], size[-1]), 
+                            mode='bilinear', align_corners=True)
+            else:
+                flip_output = F.upsample(input=flip_output, 
                             size=(size[-2], size[-1]), 
                             mode='bilinear')
             flip_pred = flip_output.cpu().numpy().copy()
