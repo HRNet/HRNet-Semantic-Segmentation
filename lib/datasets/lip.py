@@ -84,11 +84,12 @@ class LIP(BaseDataset):
                     self.root, 'lip/TrainVal_parsing_annotations/', 
                     item["label"]),
                     cv2.IMREAD_GRAYSCALE)
-        print(os.path.join(
-                self.root, 'lip/TrainVal_parsing_annotations/', 
-                item["label"]), type(label), label.shape)
-        print(os.path.join(
-                self.root, 'lip/TrainVal_images/', item["img"]), type(image), image.shape, self.crop_size)           
+        if image is None or label is None:
+            print(os.path.join(
+                    self.root, 'lip/TrainVal_parsing_annotations/', 
+                    item["label"]), type(label), label.shape)
+            print(os.path.join(
+                    self.root, 'lip/TrainVal_images/', item["img"]), type(image), image.shape, self.crop_size)           
         size = label.shape
 
         if 'testval' in self.list_path:
