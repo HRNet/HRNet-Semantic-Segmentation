@@ -83,11 +83,6 @@ class LIP(BaseDataset):
                     self.root, 'lip/TrainVal_parsing_annotations/', 
                     item["label"]),
                     cv2.IMREAD_GRAYSCALE)
-        print(os.path.join(
-                    self.root, 'lip/TrainVal_parsing_annotations/', 
-                    item["label"]), type(label), label.shape)
-        print(os.path.join(
-                    self.root, 'lip/TrainVal_images/', item["img"]), type(image), image.shape, self.crop_size)       
         size = label.shape
 
         if 'testval' in self.list_path:
@@ -106,8 +101,16 @@ class LIP(BaseDataset):
                             'lip/TrainVal_parsing_annotations/', 
                             item["label_rev"]),
                             cv2.IMREAD_GRAYSCALE)
-        
-        image, label = self.resize_image(image, label, self.crop_size)
+        try:
+            image, label = self.resize_image(image, label, self.crop_size)
+        except Exception as e:
+            print(os.path.join(
+                    self.root, 'lip/TrainVal_parsing_annotations/', 
+                    item["label"]), type(label), label.shape)
+            print(os.path.join(
+                    self.root, 'lip/TrainVal_images/', item["img"]), type(image), image.shape, self.crop_size)       
+            raise e
+
         image, label = self.gen_sample(image, label, 
                                 self.multi_scale, False)
 
