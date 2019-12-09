@@ -106,6 +106,9 @@ def validate(config, testloader, model, writer_dict):
                 pred = F.upsample(input=pred, size=(
                         size[-2], size[-1]), mode='bilinear')
             
+            if idx % 10 == 0:
+                print(idx)
+
             loss = losses.mean()
             if dist.is_distributed():
                 reduced_loss = reduce_tensor(loss)

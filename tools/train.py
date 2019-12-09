@@ -216,10 +216,24 @@ def main():
 
     # optimizer
     if config.TRAIN.OPTIMIZER == 'sgd':
-        optimizer = torch.optim.SGD([{'params':
-                                  filter(lambda p: p.requires_grad,
-                                         model.parameters()),
-                                  'lr': config.TRAIN.LR}],
+
+        params_dict = dict(model.named_parameters())
+        if config.DATASET.DATASET in {'lip', 'pascal_ctx'}:
+            bb_lr = []
+            nbb_lr = []
+            nbb_keys = set()
+            for k, param in params_dict.items():
+                if any(part in k for part in {'cls', 'aux', 'ocr'}):
+                    nbb_lr.append(param)
+                    nbb_keys.add(k)
+                else:
+                    bb_lr.append(param)
+            print(nbb_keys)
+            params = [{'params': bb_lr, 'lr': config.TRAIN.LR}, {'params': nbb_lr, 'lr': config.TRAIN.LR * 10}]
+        else:
+            params = [{'params': list(params_dict.values()), 'lr': config.TRAIN.LR}]
+
+        optimizer = torch.optim.SGD(params,
                                 lr=config.TRAIN.LR,
                                 momentum=config.TRAIN.MOMENTUM,
                                 weight_decay=config.TRAIN.WD,
