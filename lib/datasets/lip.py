@@ -84,12 +84,6 @@ class LIP(BaseDataset):
                     self.root, 'lip/TrainVal_parsing_annotations/', 
                     item["label"]),
                     cv2.IMREAD_GRAYSCALE)
-        if image is None or label is None:
-            print(os.path.join(
-                    self.root, 'lip/TrainVal_parsing_annotations/', 
-                    item["label"]), type(label), label.shape)
-            print(os.path.join(
-                    self.root, 'lip/TrainVal_images/', item["img"]), type(image), image.shape, self.crop_size)           
         size = label.shape
 
         if 'testval' in self.list_path:
@@ -103,21 +97,18 @@ class LIP(BaseDataset):
         if self.flip:
             flip = np.random.choice(2) * 2 - 1
             image = image[:, ::flip, :] 
-            if flip == -1:
-                label = cv2.imread(os.path.join(self.root, 
-                            'lip/TrainVal_parsing_annotations/', 
-                            item["label_rev"]),
-                            cv2.IMREAD_GRAYSCALE)
-        try:
-            image, label = self.resize_image(image, label, self.crop_size)
-        except Exception as e:
-            print(os.path.join(
-                    self.root, 'lip/TrainVal_parsing_annotations/', 
-                    item["label"]), type(label), label.shape)
-            print(os.path.join(
-                    self.root, 'lip/TrainVal_images/', item["img"]), type(image), image.shape, self.crop_size)       
-            raise e
+            label = label[:, ::flip]
 
+            if flip == -1:
+                right_idx = [15, 17, 19]
+                left_idx = [14, 16, 18]
+                for i in range(0, 3):
+                    right_pos = np.where(label == right_idx[i])
+                    left_pos = np.where(label == left_idx[i])
+                    label[right_pos[0], right_pos[1]] = left_idx[i]
+                    label[left_pos[0], left_pos[1]] = right_idx[i]
+                    
+        image, label = self.resize_image(image, label, self.crop_size)
         image, label = self.gen_sample(image, label, 
                                 self.multi_scale, False)
 
