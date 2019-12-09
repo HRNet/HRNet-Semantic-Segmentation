@@ -148,6 +148,7 @@ def testval(config, test_dataset, testloader, model,
             image, label, _, name = batch
             size = label.size()
             pred = test_dataset.multi_scale_inference(
+                        config,
                         model, 
                         image, 
                         scales=config.TEST.SCALE_LIST, 
