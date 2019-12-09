@@ -10,4 +10,5 @@ from __future__ import print_function
 
 import models.seg_hrnet
 import models.seg_hrnet_ocr_bndefault_alignTrue_1x1
+import models.seg_hrnet_ocr_bndefault_alignFalse_1x1
 import models.seg_hrnet_ocr_bndefault_alignTrue_3x3

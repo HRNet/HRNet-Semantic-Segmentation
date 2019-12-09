@@ -49,12 +49,19 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
     cur_iters = epoch*epoch_iters
     writer = writer_dict['writer']
     global_steps = writer_dict['train_global_steps']
+
+    if 'ocr' in config.MODEL.NAME and config.TRAIN.FREEZE_LAYERS == 'extra':
+        kwargs = dict(use_ocr = epoch > config.TRAIN.FREEZE_EPOCHS)
+    else:
+        kwargs = dict()
+    logging.info(kwargs)
+
     for i_iter, batch in enumerate(trainloader, 0):
         images, labels, _, _ = batch
         images = images.cuda()
         labels = labels.long().cuda()
 
-        losses, _ = model(images, labels)
+        losses, _ = model(images, labels, **kwargs)
         loss = losses.mean()
 
         if dist.is_distributed():
@@ -80,19 +87,20 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
 
         if i_iter % config.PRINT_FREQ == 0 and dist.get_rank() == 0:
             msg = 'Epoch: [{}/{}] Iter:[{}/{}], Time: {:.2f}, ' \
-                  'lr: {:.6f}, Loss: {:.6f}' .format(
+                  'lr: {}, Loss: {:.6f}' .format(
                       epoch, num_epoch, i_iter, epoch_iters, 
-                      batch_time.average(), lr, ave_loss.average())
+                      batch_time.average(), [x['lr'] for x in optimizer.param_groups], ave_loss.average())
             logging.info(msg)
 
     writer.add_scalar('train_loss', ave_loss.average(), global_steps)
     writer_dict['train_global_steps'] = global_steps + 1
 
-def validate(config, testloader, model, writer_dict, epoch):
+def validate(config, testloader, model, writer_dict):
     model.eval()
     ave_loss = AverageMeter()
+    nums = 2 if "ocr" in config.MODEL.NAME else 1
     confusion_matrix = np.zeros(
-        (config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES))
+        (config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES, nums))
     with torch.no_grad():
         for idx, batch in enumerate(testloader):
             image, label, _, _ = batch
@@ -101,17 +109,24 @@ def validate(config, testloader, model, writer_dict, epoch):
             label = label.long().cuda()
 
             losses, pred = model(image, label)
-            if "ocr" in config.MODEL.NAME:
-                if epoch <= config.TRAIN.FREEZE_EPOCHS and config.TRAIN.FREEZE_LAYERS == 'extra':
-                    pred = pred[0]
+            if not isinstance(pred, (list, tuple)):
+                pred = [pred]
+            for i, x in enumerate(pred):
+                if "alignTrue" in config.MODEL.NAME:  
+                    x = F.upsample(input=x, size=(
+                            size[-2], size[-1]), mode='bilinear', align_corners=True)
                 else:
-                    pred = pred[1]
-            if "align" in config.MODEL.NAME:  
-                pred = F.upsample(input=pred, size=(
-                        size[-2], size[-1]), mode='bilinear', align_corners=True)
-            else:
-                pred = F.upsample(input=pred, size=(
-                        size[-2], size[-1]), mode='bilinear')
+                    x = F.upsample(input=x, size=(
+                            size[-2], size[-1]), mode='bilinear', align_corners=False)
+
+                confusion_matrix[..., i] += get_confusion_matrix(
+                    label,
+                    x,
+                    size,
+                    config.DATASET.NUM_CLASSES,
+                    config.TRAIN.IGNORE_LABEL
+                )
+
             
             if idx % 10 == 0:
                 print(idx)
@@ -123,23 +138,19 @@ def validate(config, testloader, model, writer_dict, epoch):
                 reduced_loss = loss            
             ave_loss.update(reduced_loss.item())
 
-            confusion_matrix += get_confusion_matrix(
-                label,
-                pred,
-                size,
-                config.DATASET.NUM_CLASSES,
-                config.TRAIN.IGNORE_LABEL)
-
     if dist.is_distributed():
         confusion_matrix = torch.from_numpy(confusion_matrix).cuda()
         reduced_confusion_matrix = reduce_tensor(confusion_matrix)
         confusion_matrix = reduced_confusion_matrix.cpu().numpy()
 
-    pos = confusion_matrix.sum(1)
-    res = confusion_matrix.sum(0)
-    tp = np.diag(confusion_matrix)
-    IoU_array = (tp / np.maximum(1.0, pos + res - tp))
-    mean_IoU = IoU_array.mean()
+    for i in range(nums):
+        pos = confusion_matrix[..., i].sum(1)
+        res = confusion_matrix[..., i].sum(0)
+        tp = np.diag(confusion_matrix[..., i])
+        IoU_array = (tp / np.maximum(1.0, pos + res - tp))
+        mean_IoU = IoU_array.mean()
+        if dist.get_rank() <= 0:
+            logging.info('{} {} {}'.format(i, IoU_array, mean_IoU))
 
     writer = writer_dict['writer']
     global_steps = writer_dict['valid_global_steps']
@@ -166,7 +177,7 @@ def testval(config, test_dataset, testloader, model,
             
             if pred.size()[-2] != size[-2] or pred.size()[-1] != size[-1]:
                 
-                if "align" in config.MODEL.NAME:  
+                if "alignTrue" in config.MODEL.NAME:  
                     pred = F.upsample(pred, (size[-2], size[-1]), 
                                    mode='bilinear', align_corners=True)
                
@@ -221,7 +232,7 @@ def test(config, test_dataset, testloader, model,
                         flip=config.TEST.FLIP_TEST)
             
             if pred.size()[-2] != size[0] or pred.size()[-1] != size[1]:
-                if "align" in config.MODEL.NAME:  
+                if "alignTrue" in config.MODEL.NAME:  
                     pred = F.upsample(pred, (size[-2], size[-1]), 
                                    mode='bilinear', align_corners=True)
                

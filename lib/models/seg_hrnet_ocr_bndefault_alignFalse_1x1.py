@@ -169,14 +169,14 @@ class _ObjectAttentionBlock(nn.Module):
         context = context.view(batch_size, self.key_channels, *x.size()[2:])
         context = self.f_up(context)
         if self.scale > 1:
-            context = F.interpolate(input=context, size=(h, w), mode='bilinear', align_corners=True)
+            context = F.interpolate(input=context, size=(h, w), mode='bilinear', align_corners=False)
 
         if self.use_bg:
             bg_context = torch.matmul(bg_sim_map, value)
             bg_context = bg_context.permute(0, 2, 1).contiguous()
             bg_context = bg_context.view(batch_size, self.key_channels, *x.size()[2:])
             bg_context = self.f_up(bg_context)
-            bg_context = F.interpolate(input=bg_context, size=(h, w), mode='bilinear', align_corners=True)
+            bg_context = F.interpolate(input=bg_context, size=(h, w), mode='bilinear', align_corners=False)
             return context, bg_context
         else:
             if self.fetch_attention:
@@ -475,7 +475,7 @@ class HighResolutionModule(nn.Module):
                     y = y + F.interpolate(
                         self.fuse_layers[i][j](x[j]),
                         size=[height_output, width_output],
-                        mode='bilinear', align_corners=True)
+                        mode='bilinear', align_corners=False)
                 else:
                     y = y + self.fuse_layers[i][j](x[j])
             x_fuse.append(self.relu(y))
@@ -675,7 +675,7 @@ class HighResolutionNet(nn.Module):
 
         return nn.Sequential(*modules), num_inchannels
 
-    def forward(self, x, use_ocr=True):
+    def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
@@ -717,11 +717,11 @@ class HighResolutionNet(nn.Module):
         # Upsampling
         x0_h, x0_w = x[0].size(2), x[0].size(3)
         x1 = F.interpolate(x[1], size=(x0_h, x0_w),
-                        mode='bilinear', align_corners=True)
+                        mode='bilinear', align_corners=False)
         x2 = F.interpolate(x[2], size=(x0_h, x0_w),
-                        mode='bilinear', align_corners=True)
+                        mode='bilinear', align_corners=False)
         x3 = F.interpolate(x[3], size=(x0_h, x0_w),
-                        mode='bilinear', align_corners=True)
+                        mode='bilinear', align_corners=False)
 
         feats = torch.cat([x[0], x1, x2, x3], 1)
 
@@ -738,10 +738,7 @@ class HighResolutionNet(nn.Module):
         out = self.cls_head(feats)
 
         out_aux_seg.append(out_aux)
-        if use_ocr:
-            out_aux_seg.append(out)
-        else:
-            out_aux_seg.append(torch.zeros_like(out))
+        out_aux_seg.append(out)
 
         return out_aux_seg
 

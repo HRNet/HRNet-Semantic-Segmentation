@@ -30,8 +30,8 @@ class FullModel(nn.Module):
     self.model = model
     self.loss = loss
 
-  def forward(self, inputs, labels):
-    outputs = self.model(inputs)
+  def forward(self, inputs, labels, *args, **kwargs):
+    outputs = self.model(inputs, *args, **kwargs)
     loss = self.loss(outputs, labels)
     return torch.unsqueeze(loss,0), outputs
 
@@ -131,9 +131,13 @@ def get_confusion_matrix(label, pred, size, num_class, ignore=-1):
 
 def freeze_layers(model, freeze_type):
     assert freeze_type in ['', 'backbone', 'extra']
+    print(freeze_type, getattr(model.module.model, 'extra_layers', []))
     if not freeze_type:
         return
     extra_layers = getattr(model.module.model, 'extra_layers', [])
+
+    for p in model.parameters():
+        p.requires_grad = freeze_type == 'extra'
 
     if freeze_type == 'backbone':
         model.eval()
@@ -153,9 +157,9 @@ def freeze_layers(model, freeze_type):
     return model
 
 def adjust_learning_rate(optimizer, base_lr, max_iters, 
-        cur_iters, power=0.9):
+        cur_iters, power=0.9, nbb_mult=10):
     lr = base_lr*((1-float(cur_iters)/max_iters)**(power))
     optimizer.param_groups[0]['lr'] = lr
     if len(optimizer.param_groups) == 2:
-        optimizer.param_groups[1]['lr'] = lr * 10
+        optimizer.param_groups[1]['lr'] = lr * nbb_mult
     return lr

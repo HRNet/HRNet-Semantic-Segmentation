@@ -219,18 +219,18 @@ def main():
     if config.TRAIN.OPTIMIZER == 'sgd':
 
         params_dict = dict(model.named_parameters())
-        if config.DATASET.DATASET in {'pascal_ctx'}:
+        if config.TRAIN.NBB_KEYWORDS:
             bb_lr = []
             nbb_lr = []
             nbb_keys = set()
             for k, param in params_dict.items():
-                if any(part in k for part in {'cls', 'aux', 'ocr'}):
+                if any(part in k for part in config.TRAIN.NBB_KEYWORDS):
                     nbb_lr.append(param)
                     nbb_keys.add(k)
                 else:
                     bb_lr.append(param)
             print(nbb_keys)
-            params = [{'params': bb_lr, 'lr': config.TRAIN.LR}, {'params': nbb_lr, 'lr': config.TRAIN.LR * 10}]
+            params = [{'params': bb_lr, 'lr': config.TRAIN.LR}, {'params': nbb_lr, 'lr': config.TRAIN.LR * config.TRAIN.NBB_MULT}]
         else:
             params = [{'params': list(params_dict.values()), 'lr': config.TRAIN.LR}]
 
@@ -267,11 +267,14 @@ def main():
     num_iters = config.TRAIN.END_EPOCH * epoch_iters
     extra_iters = config.TRAIN.EXTRA_EPOCH * epoch_iters
     
+    valid_loss, mean_IoU, IoU_array = validate(config, 
+                testloader, model, writer_dict)
     for epoch in range(last_epoch, end_epoch):
 
         current_trainloader = extra_trainloader if epoch >= config.TRAIN.END_EPOCH else trainloader
         if current_trainloader.sampler is not None and hasattr(current_trainloader.sampler, 'set_epoch'):
             current_trainloader.sampler.set_epoch(epoch)
+
 
         if epoch >= config.TRAIN.END_EPOCH:
             train(config, epoch-config.TRAIN.END_EPOCH, 
@@ -284,7 +287,7 @@ def main():
                   trainloader, optimizer, model, writer_dict)
 
         valid_loss, mean_IoU, IoU_array = validate(config, 
-                    testloader, model, writer_dict, epoch)
+                    testloader, model, writer_dict)
 
         if args.local_rank <= 0:
             logger.info('=> saving checkpoint to {}'.format(

@@ -78,19 +78,19 @@ class CrossEntropy_AUX(nn.Module):
         
         h, w = target.size(1), target.size(2)
         if ph0 != h or pw0 != w:
-            if "align" in self.model_name:
+            if "alignTrue" in self.model_name:
                 score_aux = F.upsample(
                     input=score_aux, size=(h, w), mode='bilinear', align_corners=True)
             else:
                 score_aux = F.upsample(
-                    input=score_aux, size=(h, w), mode='bilinear')
+                    input=score_aux, size=(h, w), mode='bilinear', align_corners=False)
         if ph1 != h or pw1 != w:
-            if "align" in self.model_name:
+            if "alignTrue" in self.model_name:
                 score_seg = F.upsample(
                     input=score_seg, size=(h, w), mode='bilinear', align_corners=True)
             else:
                 score_seg = F.upsample(
-                    input=score_seg, size=(h, w), mode='bilinear')
+                    input=score_seg, size=(h, w), mode='bilinear', align_corners=False)
 
         loss = 0.4 * self.criterion0(score_aux, target) + 1.0 * self.criterion1(score_seg, target)
 
