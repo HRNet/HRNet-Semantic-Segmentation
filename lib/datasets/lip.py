@@ -85,9 +85,9 @@ class LIP(BaseDataset):
                     cv2.IMREAD_GRAYSCALE)
         print(os.path.join(
                     self.root, 'lip/TrainVal_parsing_annotations/', 
-                    item["label"]), type(label))
+                    item["label"]), type(label), label.shape)
         print(os.path.join(
-                    self.root, 'lip/TrainVal_images/', item["img"]), type(image))        
+                    self.root, 'lip/TrainVal_images/', item["img"]), type(image), image.shape)        
         size = label.shape
 
         if 'testval' in self.list_path:
