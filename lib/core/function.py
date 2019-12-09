@@ -19,6 +19,7 @@ from torch.nn import functional as F
 from utils.utils import AverageMeter
 from utils.utils import get_confusion_matrix
 from utils.utils import adjust_learning_rate
+from utils.utils import freeze_layers
 
 import distributed as dist
 
@@ -39,6 +40,9 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
         num_iters, trainloader, optimizer, model, writer_dict):
     # Training
     model.train()
+
+    if epoch <= config.TRAIN.FREEZE_EPOCHS:
+        freeze_layers(model, config.TRAIN.FREEZE_LAYERS)
     batch_time = AverageMeter()
     ave_loss = AverageMeter()
     tic = time.time()
@@ -84,7 +88,7 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
     writer.add_scalar('train_loss', ave_loss.average(), global_steps)
     writer_dict['train_global_steps'] = global_steps + 1
 
-def validate(config, testloader, model, writer_dict):
+def validate(config, testloader, model, writer_dict, epoch):
     model.eval()
     ave_loss = AverageMeter()
     confusion_matrix = np.zeros(
@@ -97,8 +101,11 @@ def validate(config, testloader, model, writer_dict):
             label = label.long().cuda()
 
             losses, pred = model(image, label)
-            if "ocr" in config.MODEL.NAME:  
-                pred = pred[1]
+            if "ocr" in config.MODEL.NAME:
+                if epoch <= config.TRAIN.FREEZE_EPOCHS and config.TRAIN.FREEZE_LAYERS == 'extra':
+                    pred = pred[0]
+                else:
+                    pred = pred[1]
             if "align" in config.MODEL.NAME:  
                 pred = F.upsample(input=pred, size=(
                         size[-2], size[-1]), mode='bilinear', align_corners=True)

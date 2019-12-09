@@ -55,6 +55,9 @@ _C.DATASET.TEST_SET = 'list/cityscapes/val.lst'
 # training
 _C.TRAIN = CN()
 
+_C.TRAIN.FREEZE_LAYERS = ''
+_C.TRAIN.FREEZE_EPOCHS = -1
+
 _C.TRAIN.IMAGE_SIZE = [1024, 512]  # width * height
 _C.TRAIN.BASE_SIZE = 2048
 _C.TRAIN.DOWNSAMPLERATE = 1

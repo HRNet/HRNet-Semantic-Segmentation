@@ -585,6 +585,13 @@ class HighResolutionNet(nn.Module):
             nn.Conv2d(last_inp_channels, config.DATASET.NUM_CLASSES,
                       kernel_size=1, stride=1, padding=0, bias=True)
         )
+
+        self.extra_layers = [
+            self.conv3x3_ocr,
+            self.ocr_gather_head,
+            self.ocr_distri_head,
+            self.cls_head
+        ]
         
     def _make_transition_layer(
             self, num_channels_pre_layer, num_channels_cur_layer):
@@ -747,16 +754,21 @@ class HighResolutionNet(nn.Module):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
         if os.path.isfile(pretrained):
-            pretrained_dict = torch.load(pretrained)
+            pretrained_dict = torch.load(pretrained, map_location={'cuda:0': 'cpu'})
             logger.info('=> loading pretrained model {}'.format(pretrained))
             model_dict = self.state_dict()
+            pretrained_dict = {k.replace('last_layer', 'aux_head').replace('model.', ''): v for k, v in pretrained_dict.items()}  
+            print(set(model_dict) - set(pretrained_dict))            
+            print(set(pretrained_dict) - set(model_dict))            
             pretrained_dict = {k: v for k, v in pretrained_dict.items()
                                if k in model_dict.keys()}
-            for k, _ in pretrained_dict.items():
-                logger.info(
-                    '=> loading {} pretrained model {}'.format(k, pretrained))
+            # for k, _ in pretrained_dict.items():
+                # logger.info(
+                #     '=> loading {} pretrained model {}'.format(k, pretrained))
             model_dict.update(pretrained_dict)
             self.load_state_dict(model_dict)
+        elif pretrained:
+            raise RuntimeError('No such file {}'.format(pretrained))
 
 
 def get_seg_model(cfg, **kwargs):

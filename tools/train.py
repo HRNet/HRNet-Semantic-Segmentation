@@ -207,6 +207,7 @@ def main():
         model = model.to(device)
         model = torch.nn.parallel.DistributedDataParallel(
             model,
+            find_unused_parameters=True,
             device_ids=[args.local_rank],
             output_device=args.local_rank
         )
@@ -251,13 +252,15 @@ def main():
         model_state_file = os.path.join(final_output_dir,
                                         'checkpoint.pth.tar')
         if os.path.isfile(model_state_file):
-            checkpoint = torch.load(model_state_file)
+            checkpoint = torch.load(model_state_file, map_location={'cuda:0': 'cpu'})
             best_mIoU = checkpoint['best_mIoU']
             last_epoch = checkpoint['epoch']
             model.module.load_state_dict(checkpoint['state_dict'])
             optimizer.load_state_dict(checkpoint['optimizer'])
             logger.info("=> loaded checkpoint (epoch {})"
                         .format(checkpoint['epoch']))
+        if distributed:
+            torch.distributed.barrier()
 
     start = timeit.default_timer()
     end_epoch = config.TRAIN.END_EPOCH + config.TRAIN.EXTRA_EPOCH
@@ -269,7 +272,7 @@ def main():
         current_trainloader = extra_trainloader if epoch >= config.TRAIN.END_EPOCH else trainloader
         if current_trainloader.sampler is not None and hasattr(current_trainloader.sampler, 'set_epoch'):
             current_trainloader.sampler.set_epoch(epoch)
-
+            
         if epoch >= config.TRAIN.END_EPOCH:
             train(config, epoch-config.TRAIN.END_EPOCH, 
                   config.TRAIN.EXTRA_EPOCH, epoch_iters, 
@@ -281,7 +284,7 @@ def main():
                   trainloader, optimizer, model, writer_dict)
 
         valid_loss, mean_IoU, IoU_array = validate(config, 
-                    testloader, model, writer_dict)
+                    testloader, model, writer_dict, epoch)
 
         if args.local_rank <= 0:
             logger.info('=> saving checkpoint to {}'.format(

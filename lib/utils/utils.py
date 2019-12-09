@@ -129,6 +129,29 @@ def get_confusion_matrix(label, pred, size, num_class, ignore=-1):
                                  i_pred] = label_count[cur_index]
     return confusion_matrix
 
+def freeze_layers(model, freeze_type):
+    assert freeze_type in ['', 'backbone', 'extra']
+    if not freeze_type:
+        return
+    extra_layers = getattr(model.module.model, 'extra_layers', [])
+
+    if freeze_type == 'backbone':
+        model.eval()
+        for layer in extra_layers:
+            layer.train()
+            for p in layer.parameters():
+                p.requires_grad = True
+            print('finetune', layer)
+    else:
+        model.train()
+        for layer in extra_layers:
+            layer.eval()
+            for p in layer.parameters():
+                p.requires_grad = False
+            print('freeze', layer)
+    
+    return model
+
 def adjust_learning_rate(optimizer, base_lr, max_iters, 
         cur_iters, power=0.9):
     lr = base_lr*((1-float(cur_iters)/max_iters)**(power))
