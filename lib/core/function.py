@@ -19,7 +19,7 @@ from torch.nn import functional as F
 from utils.utils import AverageMeter
 from utils.utils import get_confusion_matrix
 from utils.utils import adjust_learning_rate
-from utils.utils import freeze_layers
+from utils.utils import freeze_layers, open_all_layers
 
 import distributed as dist
 
@@ -43,6 +43,8 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
 
     if epoch <= config.TRAIN.FREEZE_EPOCHS:
         freeze_layers(model, config.TRAIN.FREEZE_LAYERS)
+    else:
+        open_all_layers(model)
     batch_time = AverageMeter()
     ave_loss = AverageMeter()
     tic = time.time()

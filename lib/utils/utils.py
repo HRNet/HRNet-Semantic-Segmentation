@@ -156,6 +156,13 @@ def freeze_layers(model, freeze_type):
     
     return model
 
+def open_all_layers(model):
+    model.train()
+    for p in model.parameters():
+        p.requires_grad = True
+
+    return model    
+
 def adjust_learning_rate(optimizer, base_lr, max_iters, 
         cur_iters, power=0.9, nbb_mult=10):
     lr = base_lr*((1-float(cur_iters)/max_iters)**(power))
