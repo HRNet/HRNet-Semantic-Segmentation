@@ -147,6 +147,7 @@ class LIP(BaseDataset):
                 flip_output = F.upsample(input=flip_output, 
                             size=(size[-2], size[-1]), 
                             mode='bilinear')
+            flip_output = flip_output.cpu()
             flip_pred = flip_output.cpu().numpy().copy()
             flip_pred[:,14,:,:] = flip_output[:,15,:,:]
             flip_pred[:,15,:,:] = flip_output[:,14,:,:]

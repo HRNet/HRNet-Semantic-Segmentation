@@ -7,6 +7,7 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
+import logging
 
 class CrossEntropy(nn.Module):
     def __init__(self, ignore_label=-1, weight=None):
@@ -68,6 +69,9 @@ class CrossEntropy_AUX(nn.Module):
                                              ignore_index=ignore_label)
         self.criterion1 = nn.CrossEntropyLoss(weight=weight, 
                                              ignore_index=ignore_label)
+        import os
+        self.loss_weights = list(map(float, os.environ.get('loss_weights', '0.4_1.0').split('_')))
+        logging.info(self.loss_weights)
         self.model_name=model_name
 
     def forward(self, score, target):
@@ -92,6 +96,6 @@ class CrossEntropy_AUX(nn.Module):
                 score_seg = F.upsample(
                     input=score_seg, size=(h, w), mode='bilinear', align_corners=False)
 
-        loss = 0.4 * self.criterion0(score_aux, target) + 1.0 * self.criterion1(score_seg, target)
+        loss = self.loss_weights[0] * self.criterion0(score_aux, target) + self.loss_weights[1] * self.criterion1(score_seg, target)
 
         return loss
