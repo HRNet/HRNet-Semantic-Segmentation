@@ -138,7 +138,12 @@ class LIP(BaseDataset):
             flip_img = image.numpy()[:,:,:,::-1]
             flip_output = model(torch.from_numpy(flip_img.copy()))
             if "ocr" in config.MODEL.NAME:  
-                flip_output = flip_output[1]
+                import os
+                if os.environ.get('eval_dsn'):
+                    idx = 0
+                else:
+                    idx = 1
+                pred = pred[idx]
             if "align" in config.MODEL.NAME:  
                 flip_output = F.upsample(input=flip_output, 
                             size=(size[-2], size[-1]), 
