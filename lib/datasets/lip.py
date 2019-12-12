@@ -143,7 +143,7 @@ class LIP(BaseDataset):
                     idx = 0
                 else:
                     idx = 1
-                pred = pred[idx]
+                flip_output = flip_output[idx]
             if "align" in config.MODEL.NAME:  
                 flip_output = F.upsample(input=flip_output, 
                             size=(size[-2], size[-1]), 
