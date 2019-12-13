@@ -5,3 +5,6 @@ data/
 log/
 output/
 pretrained_models
+scripts/
+detail-api/
+data/list
