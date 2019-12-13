@@ -19,15 +19,10 @@ import torch.nn as nn
 import torch._utils
 import torch.nn.functional as F
 
-if torch.__version__.startswith('0'):
-    from .sync_bn.inplace_abn.bn import InPlaceABNSync
-    BatchNorm2d = functools.partial(InPlaceABNSync, activation='none')
-    BatchNorm2d_class = InPlaceABNSync
-    relu_inplace = False
-else:
-    BatchNorm2d_class = BatchNorm2d = torch.nn.SyncBatchNorm
-    relu_inplace = True
-print('relu_inplace', relu_inplace)
+from config import config
+
+from .bn_helper import BatchNorm2d, BatchNorm2d_class, relu_inplace
+
 BN_MOMENTUM = 0.1
 logger = logging.getLogger(__name__)
 
@@ -37,7 +32,7 @@ class ModuleHelper:
     def BNReLU(num_features, bn_type=None, **kwargs):
         return nn.Sequential(
             BatchNorm2d(num_features, **kwargs),
-            nn.ReLU(inplace=relu_inplace)
+            nn.ReLU()
         )
 
     @staticmethod
@@ -55,31 +50,19 @@ class SpatialGather_Module(nn.Module):
         Aggregate the context features according to the initial predicted probability distribution.
         Employ the soft-weighted method to aggregate the context.
     """
-    def __init__(self, cls_num=0, scale=1, use_gt=False):
+    def __init__(self, cls_num=0, scale=1):
         super(SpatialGather_Module, self).__init__()
         self.cls_num = cls_num
         self.scale = scale
-        self.use_gt = use_gt
-        self.relu = nn.ReLU(inplace=True)
 
-    def forward(self, feats, probs, gt_probs=None):
-        if self.use_gt and gt_probs is not None:
-            gt_probs = label_to_onehot(gt_probs.squeeze(1).type(torch.cuda.LongTensor), probs.size(1))
-            batch_size, c, h, w = gt_probs.size(0), gt_probs.size(1), gt_probs.size(2), gt_probs.size(3)
-            gt_probs = gt_probs.view(batch_size, c, -1)
-            feats = feats.view(batch_size, feats.size(1), -1)
-            feats = feats.permute(0, 2, 1) # batch x hw x c 
-            gt_probs = F.normalize(gt_probs, p=1, dim=2)# batch x k x hw
-            ocr_context = torch.matmul(gt_probs, feats).permute(0, 2, 1).unsqueeze(3)# batch x k x c
-            return ocr_context               
-        else:
-            batch_size, c, h, w = probs.size(0), probs.size(1), probs.size(2), probs.size(3)
-            probs = probs.view(batch_size, c, -1)
-            feats = feats.view(batch_size, feats.size(1), -1)
-            feats = feats.permute(0, 2, 1) # batch x hw x c 
-            probs = F.softmax(self.scale * probs, dim=2)# batch x k x hw
-            ocr_context = torch.matmul(probs, feats).permute(0, 2, 1).unsqueeze(3)# batch x k x c
-            return ocr_context
+    def forward(self, feats, probs):
+        batch_size, c, h, w = probs.size(0), probs.size(1), probs.size(2), probs.size(3)
+        probs = probs.view(batch_size, c, -1)
+        feats = feats.view(batch_size, feats.size(1), -1)
+        feats = feats.permute(0, 2, 1) # batch x hw x c 
+        probs = F.softmax(self.scale * probs, dim=2)# batch x k x hw
+        ocr_context = torch.matmul(probs, feats).permute(0, 2, 1).unsqueeze(3)# batch x k x c
+        return ocr_context
 
 
 class _ObjectAttentionBlock(nn.Module):
@@ -91,8 +74,6 @@ class _ObjectAttentionBlock(nn.Module):
         in_channels       : the dimension of the input feature map
         key_channels      : the dimension after the key/query transform
         scale             : choose the scale to downsample the input feature maps (save memory cost)
-        use_gt            : whether use the ground truth label map to compute the similarity map
-        fetch_attention   : whether return the estimated similarity map
         bn_type           : specify the bn type
     Return:
         N X C X H X W
@@ -140,7 +121,7 @@ class _ObjectAttentionBlock(nn.Module):
             ModuleHelper.BNReLU(self.in_channels, bn_type=bn_type),
         )
 
-    def forward(self, x, proxy, gt_label=None):
+    def forward(self, x, proxy):
         batch_size, h, w = x.size(0), x.size(2), x.size(3)
         if self.scale > 1:
             x = self.pool(x)
@@ -151,17 +132,9 @@ class _ObjectAttentionBlock(nn.Module):
         value = self.f_down(proxy).view(batch_size, self.key_channels, -1)
         value = value.permute(0, 2, 1)
 
-        if self.use_gt and gt_label is not None:
-            gt_label = label_to_onehot(gt_label.squeeze(1).type(torch.cuda.LongTensor), proxy.size(2)-1)
-            sim_map = gt_label[:, :, :, :].permute(0, 2, 3, 1).view(batch_size, h*w, -1)
-            if self.use_bg:
-                bg_sim_map = 1.0 - sim_map
-                bg_sim_map = F.normalize(bg_sim_map, p=1, dim=-1)
-            sim_map = F.normalize(sim_map, p=1, dim=-1)
-        else:
-            sim_map = torch.matmul(query, key)
-            sim_map = (self.key_channels**-.5) * sim_map
-            sim_map = F.softmax(sim_map, dim=-1)   
+        sim_map = torch.matmul(query, key)
+        sim_map = (self.key_channels**-.5) * sim_map
+        sim_map = F.softmax(sim_map, dim=-1)   
 
         # add bg context ...
         context = torch.matmul(sim_map, value)
@@ -169,37 +142,19 @@ class _ObjectAttentionBlock(nn.Module):
         context = context.view(batch_size, self.key_channels, *x.size()[2:])
         context = self.f_up(context)
         if self.scale > 1:
-            context = F.interpolate(input=context, size=(h, w), mode='bilinear', align_corners=True)
+            context = F.interpolate(input=context, size=(h, w), mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
 
-        if self.use_bg:
-            bg_context = torch.matmul(bg_sim_map, value)
-            bg_context = bg_context.permute(0, 2, 1).contiguous()
-            bg_context = bg_context.view(batch_size, self.key_channels, *x.size()[2:])
-            bg_context = self.f_up(bg_context)
-            bg_context = F.interpolate(input=bg_context, size=(h, w), mode='bilinear', align_corners=True)
-            return context, bg_context
-        else:
-            if self.fetch_attention:
-                return context, sim_map
-            else:
-                return context
-
+        return context
 
 class ObjectAttentionBlock2D(_ObjectAttentionBlock):
     def __init__(self, 
                  in_channels, 
                  key_channels, 
                  scale=1, 
-                 use_gt=False, 
-                 use_bg=False,
-                 fetch_attention=False, 
                  bn_type=None):
         super(ObjectAttentionBlock2D, self).__init__(in_channels,
                                                      key_channels,
                                                      scale, 
-                                                     use_gt,
-                                                     use_bg,
-                                                     fetch_attention,
                                                      bn_type=bn_type)
 
 
@@ -214,25 +169,13 @@ class SpatialOCR_Module(nn.Module):
                  out_channels, 
                  scale=1, 
                  dropout=0.1, 
-                 use_gt=False,
-                 use_bg=False,
-                 fetch_attention=False, 
                  bn_type=None):
         super(SpatialOCR_Module, self).__init__()
-        self.use_gt = use_gt
-        self.use_bg = use_bg
-        self.fetch_attention = fetch_attention
         self.object_context_block = ObjectAttentionBlock2D(in_channels, 
                                                            key_channels, 
                                                            scale, 
-                                                           use_gt,
-                                                           use_bg,
-                                                           fetch_attention,
                                                            bn_type)
-        if self.use_bg:
-            _in_channels = 3 * in_channels
-        else:
-            _in_channels = 2 * in_channels
+        _in_channels = 2 * in_channels
 
         self.conv_bn_dropout = nn.Sequential(
             nn.Conv2d(_in_channels, out_channels, kernel_size=1, padding=0, bias=False),
@@ -240,28 +183,12 @@ class SpatialOCR_Module(nn.Module):
             nn.Dropout2d(dropout)
         )
 
-    def forward(self, feats, proxy_feats, gt_label=None):
-        if self.use_gt and gt_label is not None:
-            if self.use_bg:
-                context, bg_context = self.object_context_block(feats, proxy_feats, gt_label)
-            else:
-                context = self.object_context_block(feats, proxy_feats, gt_label)
-        else:
-            if self.fetch_attention:
-                context, sim_map = self.object_context_block(feats, proxy_feats)
-            else:
-                context = self.object_context_block(feats, proxy_feats)
+    def forward(self, feats, proxy_feats):
+        context = self.object_context_block(feats, proxy_feats)
 
-        if self.use_bg:
-            output = self.conv_bn_dropout(torch.cat([context, bg_context, feats], 1))
-        else:
-            output = self.conv_bn_dropout(torch.cat([context, feats], 1))
+        output = self.conv_bn_dropout(torch.cat([context, feats], 1))
 
-        if self.fetch_attention:
-            return output, sim_map
-        else:
-            return output
-
+        return output
 
 class BasicBlock(nn.Module):
     expansion = 1
@@ -475,7 +402,7 @@ class HighResolutionModule(nn.Module):
                     y = y + F.interpolate(
                         self.fuse_layers[i][j](x[j]),
                         size=[height_output, width_output],
-                        mode='bilinear', align_corners=True)
+                        mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
                 else:
                     y = y + self.fuse_layers[i][j](x[j])
             x_fuse.append(self.relu(y))
@@ -543,23 +470,6 @@ class HighResolutionNet(nn.Module):
 
         last_inp_channels = np.int(np.sum(pre_stage_channels))
 
-#        self.last_layer = nn.Sequential(
-#            nn.Conv2d(
-#                in_channels=last_inp_channels,
-#                out_channels=last_inp_channels,
-#                kernel_size=1,
-#                stride=1,
-#                padding=0),
-#            BatchNorm2d(last_inp_channels, momentum=BN_MOMENTUM),
-#            nn.ReLU(inplace=relu_inplace),
-#            nn.Conv2d(
-#                in_channels=last_inp_channels,
-#                out_channels=config.DATASET.NUM_CLASSES,
-#                kernel_size=extra.FINAL_CONV_KERNEL,
-#                stride=1,
-#                padding=1 if extra.FINAL_CONV_KERNEL == 3 else 0)
-#        )
-
         self.conv3x3_ocr = nn.Sequential(
             nn.Conv2d(last_inp_channels, 512,
                       kernel_size=3, stride=1, padding=1),
@@ -579,13 +489,20 @@ class HighResolutionNet(nn.Module):
 
         self.aux_head = nn.Sequential(
             nn.Conv2d(last_inp_channels, last_inp_channels,
-                      kernel_size=3, stride=1, padding=1),
+                      kernel_size=1, stride=1, padding=0),
             BatchNorm2d(last_inp_channels),
             nn.ReLU(inplace=relu_inplace),
             nn.Conv2d(last_inp_channels, config.DATASET.NUM_CLASSES,
                       kernel_size=1, stride=1, padding=0, bias=True)
         )
 
+        self.extra_layers = [
+            self.conv3x3_ocr,
+            self.ocr_gather_head,
+            self.ocr_distri_head,
+            self.cls_head
+        ]
+        
     def _make_transition_layer(
             self, num_channels_pre_layer, num_channels_cur_layer):
         num_branches_cur = len(num_channels_cur_layer)
@@ -668,7 +585,7 @@ class HighResolutionNet(nn.Module):
 
         return nn.Sequential(*modules), num_inchannels
 
-    def forward(self, x):
+    def forward(self, x, use_ocr=True):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
@@ -710,11 +627,11 @@ class HighResolutionNet(nn.Module):
         # Upsampling
         x0_h, x0_w = x[0].size(2), x[0].size(3)
         x1 = F.interpolate(x[1], size=(x0_h, x0_w),
-                        mode='bilinear', align_corners=True)
+                        mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
         x2 = F.interpolate(x[2], size=(x0_h, x0_w),
-                        mode='bilinear', align_corners=True)
+                        mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
         x3 = F.interpolate(x[3], size=(x0_h, x0_w),
-                        mode='bilinear', align_corners=True)
+                        mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
 
         feats = torch.cat([x[0], x1, x2, x3], 1)
 
@@ -731,7 +648,10 @@ class HighResolutionNet(nn.Module):
         out = self.cls_head(feats)
 
         out_aux_seg.append(out_aux)
-        out_aux_seg.append(out)
+        if use_ocr:
+            out_aux_seg.append(out)
+        else:
+            out_aux_seg.append(torch.zeros_like(out))
 
         return out_aux_seg
 
@@ -739,7 +659,7 @@ class HighResolutionNet(nn.Module):
         logger.info('=> init weights from normal distribution')
         for name, m in self.named_modules():
             if any(part in name for part in {'cls', 'aux', 'ocr'}):
-                print('skipped', name)
+                # print('skipped', name)
                 continue
             if isinstance(m, nn.Conv2d):
                 nn.init.normal_(m.weight, std=0.001)
@@ -747,16 +667,21 @@ class HighResolutionNet(nn.Module):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
         if os.path.isfile(pretrained):
-            pretrained_dict = torch.load(pretrained)
+            pretrained_dict = torch.load(pretrained, map_location={'cuda:0': 'cpu'})
             logger.info('=> loading pretrained model {}'.format(pretrained))
             model_dict = self.state_dict()
+            pretrained_dict = {k.replace('last_layer', 'aux_head').replace('model.', ''): v for k, v in pretrained_dict.items()}  
+            print(set(model_dict) - set(pretrained_dict))            
+            print(set(pretrained_dict) - set(model_dict))            
             pretrained_dict = {k: v for k, v in pretrained_dict.items()
                                if k in model_dict.keys()}
-            for k, _ in pretrained_dict.items():
-                logger.info(
-                    '=> loading {} pretrained model {}'.format(k, pretrained))
+            # for k, _ in pretrained_dict.items():
+                # logger.info(
+                #     '=> loading {} pretrained model {}'.format(k, pretrained))
             model_dict.update(pretrained_dict)
             self.load_state_dict(model_dict)
+        elif pretrained:
+            raise RuntimeError('No such file {}'.format(pretrained))
 
 
 def get_seg_model(cfg, **kwargs):

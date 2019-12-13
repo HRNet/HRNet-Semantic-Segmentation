@@ -166,14 +166,11 @@ class Cityscapes(BaseDataset):
                         count[:,:,h0:h1,w0:w1] += 1
                 preds = preds / count
                 preds = preds[:,:,:height,:width]
-            
-            if "align" in config.MODEL.NAME:  
-                preds = F.upsample(preds, (ori_height, ori_width), 
-                                   mode='bilinear', align_corners=True)
-            else:
-                preds = F.upsample(preds, (ori_height, ori_width), 
-                                   mode='bilinear')
-            
+
+            preds = F.interpolate(
+                preds, (ori_height, ori_width), 
+                mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS
+            )            
             final_pred += preds
         return final_pred
 

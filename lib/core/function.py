@@ -23,6 +23,7 @@ from utils.utils import freeze_layers, open_all_layers
 
 import distributed as dist
 
+
 def reduce_tensor(inp):
     """
     Reduce the loss from all processes so that 
@@ -36,8 +37,9 @@ def reduce_tensor(inp):
         torch.distributed.reduce(reduced_inp, dst=0)
     return reduced_inp / world_size
 
-def train(config, epoch, num_epoch, epoch_iters, base_lr, 
-        num_iters, trainloader, optimizer, model, writer_dict):
+
+def train(config, epoch, num_epoch, epoch_iters, base_lr,
+          num_iters, trainloader, optimizer, model, writer_dict):
     # Training
     model.train()
 
@@ -52,18 +54,12 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
     writer = writer_dict['writer']
     global_steps = writer_dict['train_global_steps']
 
-    if 'ocr' in config.MODEL.NAME and config.TRAIN.FREEZE_LAYERS == 'extra':
-        kwargs = dict(use_ocr = epoch > config.TRAIN.FREEZE_EPOCHS)
-    else:
-        kwargs = dict()
-    logging.info(kwargs)
-
     for i_iter, batch in enumerate(trainloader, 0):
         images, labels, _, _ = batch
         images = images.cuda()
         labels = labels.long().cuda()
 
-        losses, _ = model(images, labels, **kwargs)
+        losses, _ = model(images, labels)
         loss = losses.mean()
 
         if dist.is_distributed():
@@ -90,7 +86,7 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
         if i_iter % config.PRINT_FREQ == 0 and dist.get_rank() == 0:
             msg = 'Epoch: [{}/{}] Iter:[{}/{}], Time: {:.2f}, ' \
                   'lr: {}, Loss: {:.6f}' .format(
-                      epoch, num_epoch, i_iter, epoch_iters, 
+                      epoch, num_epoch, i_iter, epoch_iters,
                       batch_time.average(), [x['lr'] for x in optimizer.param_groups], ave_loss.average())
             logging.info(msg)
 
@@ -100,7 +96,7 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
 def validate(config, testloader, model, writer_dict):
     model.eval()
     ave_loss = AverageMeter()
-    nums = 2 if "ocr" in config.MODEL.NAME else 1
+    nums = config.MODEL.NUM_OUTPUTS
     confusion_matrix = np.zeros(
         (config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES, nums))
     with torch.no_grad():
@@ -114,12 +110,10 @@ def validate(config, testloader, model, writer_dict):
             if not isinstance(pred, (list, tuple)):
                 pred = [pred]
             for i, x in enumerate(pred):
-                if "alignTrue" in config.MODEL.NAME:  
-                    x = F.upsample(input=x, size=(
-                            size[-2], size[-1]), mode='bilinear', align_corners=True)
-                else:
-                    x = F.upsample(input=x, size=(
-                            size[-2], size[-1]), mode='bilinear', align_corners=False)
+                x = F.interpolate(
+                    input=x, size=size[-2:],
+                    mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS
+                )
 
                 confusion_matrix[..., i] += get_confusion_matrix(
                     label,
@@ -129,7 +123,6 @@ def validate(config, testloader, model, writer_dict):
                     config.TRAIN.IGNORE_LABEL
                 )
 
-            
             if idx % 10 == 0:
                 print(idx)
 
@@ -137,7 +130,7 @@ def validate(config, testloader, model, writer_dict):
             if dist.is_distributed():
                 reduced_loss = reduce_tensor(loss)
             else:
-                reduced_loss = loss            
+                reduced_loss = loss
             ave_loss.update(reduced_loss.item())
 
     if dist.is_distributed():
@@ -161,8 +154,9 @@ def validate(config, testloader, model, writer_dict):
     writer_dict['valid_global_steps'] = global_steps + 1
     return ave_loss.average(), mean_IoU, IoU_array
 
-def testval(config, test_dataset, testloader, model, 
-        sv_dir='', sv_pred=False):
+
+def testval(config, test_dataset, testloader, model,
+            sv_dir='', sv_pred=False):
     model.eval()
     confusion_matrix = np.zeros(
         (config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES))
@@ -171,23 +165,18 @@ def testval(config, test_dataset, testloader, model,
             image, label, _, name = batch
             size = label.size()
             pred = test_dataset.multi_scale_inference(
-                        config,
-                        model, 
-                        image, 
-                        scales=config.TEST.SCALE_LIST, 
-                        flip=config.TEST.FLIP_TEST)
-            
+                config,
+                model,
+                image,
+                scales=config.TEST.SCALE_LIST,
+                flip=config.TEST.FLIP_TEST)
+
             if pred.size()[-2] != size[-2] or pred.size()[-1] != size[-1]:
-                
-                if "alignTrue" in config.MODEL.NAME:  
-                    pred = F.upsample(pred, (size[-2], size[-1]), 
-                                   mode='bilinear', align_corners=True)
-               
-                else:
-                    pred = F.upsample(pred, (size[-2], size[-1]), 
-                                   mode='bilinear')
-                
-               
+                pred = F.interpolate(
+                    pred, size[-2:],
+                    mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS
+                )
+
             confusion_matrix += get_confusion_matrix(
                 label,
                 pred,
@@ -196,11 +185,11 @@ def testval(config, test_dataset, testloader, model,
                 config.TRAIN.IGNORE_LABEL)
 
             if sv_pred:
-                sv_path = os.path.join(sv_dir,'test_results')
+                sv_path = os.path.join(sv_dir, 'test_results')
                 if not os.path.exists(sv_path):
                     os.mkdir(sv_path)
                 test_dataset.save_pred(pred, sv_path, name)
-            
+
             if index % 100 == 0:
                 logging.info('processing: %d images' % index)
                 pos = confusion_matrix.sum(1)
@@ -220,33 +209,28 @@ def testval(config, test_dataset, testloader, model,
 
     return mean_IoU, IoU_array, pixel_acc, mean_acc
 
-def test(config, test_dataset, testloader, model, 
-        sv_dir='', sv_pred=True):
+
+def test(config, test_dataset, testloader, model,
+         sv_dir='', sv_pred=True):
     model.eval()
     with torch.no_grad():
         for _, batch in enumerate(tqdm(testloader)):
             image, size, name = batch
             size = size[0]
             pred = test_dataset.multi_scale_inference(
-                        model, 
-                        image, 
-                        scales=config.TEST.SCALE_LIST, 
-                        flip=config.TEST.FLIP_TEST)
-            
+                model,
+                image,
+                scales=config.TEST.SCALE_LIST,
+                flip=config.TEST.FLIP_TEST)
+
             if pred.size()[-2] != size[0] or pred.size()[-1] != size[1]:
-                if "alignTrue" in config.MODEL.NAME:  
-                    pred = F.upsample(pred, (size[-2], size[-1]), 
-                                   mode='bilinear', align_corners=True)
-               
-                else:
-                    pred = F.upsample(pred, (size[-2], size[-1]), 
-                                   mode='bilinear')
-                
-                
-                
+                pred = F.interpolate(
+                    pred, size[-2:],
+                    mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS
+                )
 
             if sv_pred:
-                sv_path = os.path.join(sv_dir,'test_results')
+                sv_path = os.path.join(sv_dir, 'test_results')
                 if not os.path.exists(sv_path):
                     os.mkdir(sv_path)
                 test_dataset.save_pred(pred, sv_path, name)

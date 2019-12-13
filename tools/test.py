@@ -82,6 +82,7 @@ def main():
         
     pretrained_dict = torch.load(model_state_file)
     model_dict = model.state_dict()
+    assert set(k[6:] for k in pretrained_dict) == set(model_dict)
     pretrained_dict = {k[6:]: v for k, v in pretrained_dict.items()
                         if k[6:] in model_dict.keys()}
     for k, _ in pretrained_dict.items():

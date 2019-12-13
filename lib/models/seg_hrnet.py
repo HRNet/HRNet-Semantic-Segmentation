@@ -19,15 +19,9 @@ import torch.nn as nn
 import torch._utils
 import torch.nn.functional as F
 
+from config import config
 
-if torch.__version__.startswith('0'):
-    from .sync_bn.inplace_abn.bn import InPlaceABNSync
-    BatchNorm2d = functools.partial(InPlaceABNSync, activation='none')
-    BatchNorm2d_class = InPlaceABNSync
-    relu_inplace = False
-else:
-    BatchNorm2d_class = BatchNorm2d = torch.nn.SyncBatchNorm
-    relu_inplace = True
+from .bn_helper import BatchNorm2d, BatchNorm2d_class, relu_inplace
 
 BN_MOMENTUM = 0.1
 
@@ -251,7 +245,7 @@ class HighResolutionModule(nn.Module):
                     y = y + F.interpolate(
                         self.fuse_layers[i][j](x[j]),
                         size=[height_output, width_output],
-                        mode='bilinear')
+                        mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
                 else:
                     y = y + self.fuse_layers[i][j](x[j])
             x_fuse.append(self.relu(y))
@@ -459,9 +453,9 @@ class HighResolutionNet(nn.Module):
 
         # Upsampling
         x0_h, x0_w = x[0].size(2), x[0].size(3)
-        x1 = F.upsample(x[1], size=(x0_h, x0_w), mode='bilinear')
-        x2 = F.upsample(x[2], size=(x0_h, x0_w), mode='bilinear')
-        x3 = F.upsample(x[3], size=(x0_h, x0_w), mode='bilinear')
+        x1 = F.interpolate(x[1], size=(x0_h, x0_w), mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
+        x2 = F.interpolate(x[2], size=(x0_h, x0_w), mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
+        x3 = F.interpolate(x[3], size=(x0_h, x0_w), mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
 
         x = torch.cat([x[0], x1, x2, x3], 1)
 

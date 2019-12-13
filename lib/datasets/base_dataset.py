@@ -14,14 +14,17 @@ import torch
 from torch.nn import functional as F
 from torch.utils import data
 
+from config import config
+
+
 class BaseDataset(data.Dataset):
-    def __init__(self, 
-                 ignore_label=-1, 
-                 base_size=2048, 
-                 crop_size=(512, 1024), 
+    def __init__(self,
+                 ignore_label=-1,
+                 base_size=2048,
+                 crop_size=(512, 1024),
                  downsample_rate=1,
                  scale_factor=16,
-                 mean=[0.485, 0.456, 0.406], 
+                 mean=[0.485, 0.456, 0.406],
                  std=[0.229, 0.224, 0.225]):
 
         self.base_size = base_size
@@ -37,14 +40,14 @@ class BaseDataset(data.Dataset):
 
     def __len__(self):
         return len(self.files)
-    
+
     def input_transform(self, image):
         image = image.astype(np.float32)[:, :, ::-1]
         image = image / 255.0
         image -= self.mean
         image /= self.std
         return image
-    
+
     def label_transform(self, label):
         return np.array(label).astype('int32')
 
@@ -53,19 +56,19 @@ class BaseDataset(data.Dataset):
         pad_h = max(size[0] - h, 0)
         pad_w = max(size[1] - w, 0)
         if pad_h > 0 or pad_w > 0:
-            pad_image = cv2.copyMakeBorder(image, 0, pad_h, 0, 
-                pad_w, cv2.BORDER_CONSTANT, 
-                value=padvalue)
-        
+            pad_image = cv2.copyMakeBorder(image, 0, pad_h, 0,
+                                           pad_w, cv2.BORDER_CONSTANT,
+                                           value=padvalue)
+
         return pad_image
 
     def rand_crop(self, image, label):
         h, w = image.shape[:-1]
         image = self.pad_image(image, h, w, self.crop_size,
-                                (0.0, 0.0, 0.0))
+                               (0.0, 0.0, 0.0))
         label = self.pad_image(label, h, w, self.crop_size,
-                                (self.ignore_label,))
-        
+                               (self.ignore_label,))
+
         new_h, new_w = label.shape
         x = random.randint(0, new_w - self.crop_size[1])
         y = random.randint(0, new_h - self.crop_size[0])
@@ -74,8 +77,8 @@ class BaseDataset(data.Dataset):
 
         return image, label
 
-    def multi_scale_aug(self, image, label=None, 
-            rand_scale=1, rand_crop=True):
+    def multi_scale_aug(self, image, label=None,
+                        rand_scale=1, rand_crop=True):
         long_size = np.int(self.base_size * rand_scale + 0.5)
         h, w = image.shape[:2]
         if h > w:
@@ -84,99 +87,89 @@ class BaseDataset(data.Dataset):
         else:
             new_w = long_size
             new_h = np.int(h * long_size / w + 0.5)
-        
-        image = cv2.resize(image, (new_w, new_h), 
-                           interpolation = cv2.INTER_LINEAR)
+
+        image = cv2.resize(image, (new_w, new_h),
+                           interpolation=cv2.INTER_LINEAR)
         if label is not None:
-            label = cv2.resize(label, (new_w, new_h), 
-                           interpolation = cv2.INTER_NEAREST)
+            label = cv2.resize(label, (new_w, new_h),
+                               interpolation=cv2.INTER_NEAREST)
         else:
             return image
-        
+
         if rand_crop:
             image, label = self.rand_crop(image, label)
-        
+
         return image, label
 
     def random_brightness(self, img):
-        self.shift_value = 10
-        if not os.environ.get('random_brightness'):
+        if not config.TRAIN.RANDOM_BRIGHTNESS:
             return img
         if random.random() < 0.5:
             return img
+        self.shift_value = config.TRAIN.RANDOM_BRIGHTNESS_SHIFT_VALUE
         img = img.astype(np.float32)
         shift = random.randint(-self.shift_value, self.shift_value)
         img[:, :, :] += shift
         img = np.around(img)
-        img = np.clip(img, 0, 255).astype(np.uint8)        
+        img = np.clip(img, 0, 255).astype(np.uint8)
         return img
 
-    def gen_sample(self, image, label, 
-            multi_scale=True, is_flip=True):
+    def gen_sample(self, image, label,
+                   multi_scale=True, is_flip=True):
         if multi_scale:
             rand_scale = 0.5 + random.randint(0, self.scale_factor) / 10.0
-            image, label = self.multi_scale_aug(image, label, 
-                                                    rand_scale=rand_scale)
+            image, label = self.multi_scale_aug(image, label,
+                                                rand_scale=rand_scale)
 
         image = self.random_brightness(image)
         image = self.input_transform(image)
         label = self.label_transform(label)
-        
+
         image = image.transpose((2, 0, 1))
-        
+
         if is_flip:
             flip = np.random.choice(2) * 2 - 1
             image = image[:, :, ::flip]
             label = label[:, ::flip]
 
-
         if self.downsample_rate != 1:
-            label = cv2.resize(label, 
-                               None, 
-                               fx=self.downsample_rate,
-                               fy=self.downsample_rate, 
-                               interpolation=cv2.INTER_NEAREST)
+            label = cv2.resize(
+                label,
+                None,
+                fx=self.downsample_rate,
+                fy=self.downsample_rate,
+                interpolation=cv2.INTER_NEAREST
+            )
 
         return image, label
 
     def inference(self, config, model, image, flip=False):
         size = image.size()
         pred = model(image)
-        
-        if "ocr" in config.MODEL.NAME:  
-            import os
-            if os.environ.get('eval_dsn'):
-                idx = 0
-            else:
-                idx = 1
-            pred = pred[idx]
-        
-        if "align" in config.MODEL.NAME:  
-            pred = F.upsample(input=pred, 
-                            size=(size[-2], size[-1]), 
-                            mode='bilinear', align_corners=True)
-        else:
-            pred = F.upsample(input=pred, 
-                            size=(size[-2], size[-1]), 
-                            mode='bilinear')   
-              
+
+        if config.MODEL.NUM_OUTPUTS > 1:
+            pred = pred[config.TEST.OUTPUT_INDEX]
+
+        pred = F.interpolate(
+            input=pred, size=size[-2:],
+            mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS
+        )
+
         if flip:
-            flip_img = image.numpy()[:,:,:,::-1]
+            flip_img = image.numpy()[:, :, :, ::-1]
             flip_output = model(torch.from_numpy(flip_img.copy()))
-            if "ocr" in config.MODEL.NAME:  
-                flip_output = flip_output[1]
-            if "align" in config.MODEL.NAME:  
-                flip_output = F.upsample(input=flip_output, 
-                            size=(size[-2], size[-1]), 
-                            mode='bilinear', align_corners=True)
-            else:
-                flip_output = F.upsample(input=flip_output, 
-                            size=(size[-2], size[-1]), 
-                            mode='bilinear')
-            
-            
+
+            if config.MODEL.NUM_OUTPUTS > 1:
+                flip_output = flip_output[config.TEST.OUTPUT_INDEX]
+
+            flip_output = F.interpolate(
+                input=flip_output, size=size[-2:],
+                mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS
+            )
+
             flip_pred = flip_output.cpu().numpy().copy()
-            flip_pred = torch.from_numpy(flip_pred[:,:,:,::-1].copy()).cuda()
+            flip_pred = torch.from_numpy(
+                flip_pred[:, :, :, ::-1].copy()).cuda()
             pred += flip_pred
             pred = pred * 0.5
         return pred.exp()
@@ -184,21 +177,21 @@ class BaseDataset(data.Dataset):
     def multi_scale_inference(self, config, model, image, scales=[1], flip=False):
         batch, _, ori_height, ori_width = image.size()
         assert batch == 1, "only supporting batchsize 1."
-        image = image.numpy()[0].transpose((1,2,0)).copy()
+        image = image.numpy()[0].transpose((1, 2, 0)).copy()
         stride_h = np.int(self.crop_size[0] * 2.0 / 3.0)
         stride_w = np.int(self.crop_size[1] * 2.0 / 3.0)
         final_pred = torch.zeros([1, self.num_classes,
-                                    ori_height,ori_width]).cuda()
-        padvalue = -1.0  * np.array(self.mean) / np.array(self.std)
+                                  ori_height, ori_width]).cuda()
+        padvalue = -1.0 * np.array(self.mean) / np.array(self.std)
         for scale in scales:
             new_img = self.multi_scale_aug(image=image,
                                            rand_scale=scale,
                                            rand_crop=False)
             height, width = new_img.shape[:-1]
-                
+
             if max(height, width) <= np.min(self.crop_size):
-                new_img = self.pad_image(new_img, height, width, 
-                                    self.crop_size, padvalue)
+                new_img = self.pad_image(new_img, height, width,
+                                         self.crop_size, padvalue)
                 new_img = new_img.transpose((2, 0, 1))
                 new_img = np.expand_dims(new_img, axis=0)
                 new_img = torch.from_numpy(new_img)
@@ -206,16 +199,16 @@ class BaseDataset(data.Dataset):
                 preds = preds[:, :, 0:height, 0:width]
             else:
                 if height < self.crop_size[0] or width < self.crop_size[1]:
-                    new_img = self.pad_image(new_img, height, width, 
-                                        self.crop_size, padvalue)
+                    new_img = self.pad_image(new_img, height, width,
+                                             self.crop_size, padvalue)
                 new_h, new_w = new_img.shape[:-1]
-                rows = np.int(np.ceil(1.0 * (new_h - 
-                                self.crop_size[0]) / stride_h)) + 1
-                cols = np.int(np.ceil(1.0 * (new_w - 
-                                self.crop_size[1]) / stride_w)) + 1
+                rows = np.int(np.ceil(1.0 * (new_h -
+                                             self.crop_size[0]) / stride_h)) + 1
+                cols = np.int(np.ceil(1.0 * (new_w -
+                                             self.crop_size[1]) / stride_w)) + 1
                 preds = torch.zeros([1, self.num_classes,
-                                           new_h,new_w]).cuda()
-                count = torch.zeros([1,1, new_h, new_w]).cuda()
+                                     new_h, new_w]).cuda()
+                count = torch.zeros([1, 1, new_h, new_w]).cuda()
 
                 for r in range(rows):
                     for c in range(cols):
@@ -225,27 +218,23 @@ class BaseDataset(data.Dataset):
                         w1 = min(w0 + self.crop_size[1], new_w)
                         crop_img = new_img[h0:h1, w0:w1, :]
                         if h1 == new_h or w1 == new_w:
-                            crop_img = self.pad_image(crop_img, 
-                                                      h1-h0, 
-                                                      w1-w0, 
-                                                      self.crop_size, 
+                            crop_img = self.pad_image(crop_img,
+                                                      h1-h0,
+                                                      w1-w0,
+                                                      self.crop_size,
                                                       padvalue)
                         crop_img = crop_img.transpose((2, 0, 1))
                         crop_img = np.expand_dims(crop_img, axis=0)
                         crop_img = torch.from_numpy(crop_img)
                         pred = self.inference(config, model, crop_img, flip)
-                        preds[:,:,h0:h1,w0:w1] += pred[:,:, 0:h1-h0, 0:w1-w0]
-                        count[:,:,h0:h1,w0:w1] += 1
+                        preds[:, :, h0:h1, w0:w1] += pred[:, :, 0:h1-h0, 0:w1-w0]
+                        count[:, :, h0:h1, w0:w1] += 1
                 preds = preds / count
-                preds = preds[:,:,:height,:width]
-            
-            if "align" in config.MODEL.NAME:  
-                
-                preds = F.upsample(preds, (ori_height, ori_width), 
-                                   mode='bilinear', align_corners=True)
-            else:
-                preds = F.upsample(preds, (ori_height, ori_width), 
-                                   mode='bilinear')
-            
+                preds = preds[:, :, :height, :width]
+
+            preds = F.interpolate(
+                preds, (ori_height, ori_width),
+                mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS
+            )
             final_pred += preds
         return final_pred

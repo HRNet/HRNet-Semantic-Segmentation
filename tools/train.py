@@ -28,7 +28,7 @@ import models
 import datasets
 from config import config
 from config import update_config
-from core.criterion import CrossEntropy, OhemCrossEntropy, CrossEntropy_AUX
+from core.criterion import CrossEntropy, OhemCrossEntropy
 from core.function import train, validate
 from utils.modelsummary import get_model_summary
 from utils.utils import create_logger, FullModel
@@ -188,19 +188,14 @@ def main():
         sampler=test_sampler)
 
     # criterion
-    if "ocr" in config.MODEL.NAME: 
-        print("Use ocr aux loss!!!")
-        criterion = CrossEntropy_AUX(ignore_label=config.TRAIN.IGNORE_LABEL,
-                                 weight=train_dataset.class_weights,model_name=config.MODEL.NAME)
-    else:      
-        if config.LOSS.USE_OHEM:
-            criterion = OhemCrossEntropy(ignore_label=config.TRAIN.IGNORE_LABEL,
-                                         thres=config.LOSS.OHEMTHRES,
-                                         min_kept=config.LOSS.OHEMKEEP,
-                                         weight=train_dataset.class_weights)
-        else:
-            criterion = CrossEntropy(ignore_label=config.TRAIN.IGNORE_LABEL,
-                                     weight=train_dataset.class_weights)
+    if config.LOSS.USE_OHEM:
+        criterion = OhemCrossEntropy(ignore_label=config.TRAIN.IGNORE_LABEL,
+                                        thres=config.LOSS.OHEMTHRES,
+                                        min_kept=config.LOSS.OHEMKEEP,
+                                        weight=train_dataset.class_weights)
+    else:
+        criterion = CrossEntropy(ignore_label=config.TRAIN.IGNORE_LABEL,
+                                    weight=train_dataset.class_weights)
 
     model = FullModel(model, criterion)
     if distributed:
@@ -275,6 +270,8 @@ def main():
         if current_trainloader.sampler is not None and hasattr(current_trainloader.sampler, 'set_epoch'):
             current_trainloader.sampler.set_epoch(epoch)
 
+        valid_loss, mean_IoU, IoU_array = validate(config, 
+                    testloader, model, writer_dict)
 
         if epoch >= config.TRAIN.END_EPOCH:
             train(config, epoch-config.TRAIN.END_EPOCH, 
