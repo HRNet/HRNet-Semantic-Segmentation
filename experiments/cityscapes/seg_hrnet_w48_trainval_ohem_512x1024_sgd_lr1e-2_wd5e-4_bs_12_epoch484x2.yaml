@@ -17,6 +17,7 @@ DATASET:
   NUM_CLASSES: 19
 MODEL:
   NAME: seg_hrnet
+  ALIGN_CORNERS: False
   PRETRAINED: 'pretrained_models/hrnetv2_w48_imagenet_pretrained.pth'
   EXTRA:
     FINAL_CONV_KERNEL: 1
