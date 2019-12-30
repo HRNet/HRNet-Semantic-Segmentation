@@ -6,6 +6,7 @@
 - Rank \#1 (83.7) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). HRNet combined with an extension of [object context](https://arxiv.org/pdf/1809.00916.pdf)
 
 - Pytorch-v1.1 and the official Sync-BN supported. We have reproduced the cityscapes results on the new codebase. Please check the pytorch-v1.1 branch.
+- We have unified PyTorch 0.4.1 and 1.1.0 support into one codebase, and reproduce HRNet+OCR results on it. Please check the ocr branch.
 
 ## Introduction
 This is the official code of [high-resolution representations for Semantic Segmentation](https://arxiv.org/abs/1904.04514). 
@@ -25,51 +26,31 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75.
 
 | model | Train Set | Test Set |#Params | GFLOPs | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | Train | Val | 65.8M | 696.2 | No | No | No | 80.9 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33fs5grbbxDe5rh0E?e=FK8YqK)/[BaiduYun(Access Code:tj7a)](https://pan.baidu.com/s/13ha3aMQY-f_qzjJEkrodOQ)|
-| HRNetV2-W48 | Train | Val |65.8M | 696.2 | Yes | No | No | 81.2 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQJqzjdjG_zBfQG8)/[BaiduYun(Access Code:794r)](https://pan.baidu.com/s/1BOOLKeQVde3MTeKAM_H5Nw)|
-| HRNetV2-W48 | Train | Test | 65.8M | 696.2 | No | Yes | Yes | [80.5](https://www.cityscapes-dataset.com/anonymous-results/?id=5929dc821f480d298646572d5a5c1ab0206b94347a720d3d0e0efefa5b3c5026) | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33fs5grbbxDe5rh0E?e=FK8YqK)/[BaiduYun(Access Code:tj7a)](https://pan.baidu.com/s/13ha3aMQY-f_qzjJEkrodOQ)|
-| HRNetV2-W48 | Train | Test |65.8M | 696.2 | Yes | Yes | Yes | [81.1](https://www.cityscapes-dataset.com/anonymous-results/?id=7c9d053cff143a4293fec6edea4fb7eb8c0cbe98d3e0dc62e2b1a89949bc4307) | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQJqzjdjG_zBfQG8)/[BaiduYun(Access Code:794r)](https://pan.baidu.com/s/1BOOLKeQVde3MTeKAM_H5Nw)|
-| HRNetV2-W48 | TrainVal | Test |65.8M | 696.2 | No | Yes | Yes | [81.5](https://www.cityscapes-dataset.com/anonymous-results/?id=860a48272386915f3f950916bde8fc3fabc4161985850b97942c1fd94eaa96bd) | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQUhU4Id4_nc1Vcx)/[BaiduYun(Access Code:pbai)](https://pan.baidu.com/s/1nlBVeGNszdl5c6kg8NVjiw)|
-| HRNetV2-W48 | TrainVal | Test |65.8M | 696.2 | Yes | Yes | Yes | [81.9](https://www.cityscapes-dataset.com/anonymous-results/?id=592db8db303bf97dc251419c7fa0d88846ca322d539c30228fc341ca6789c524) | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQMJK-zkWjK6V7gE)/[BaiduYun(Access Code:qett)](https://pan.baidu.com/s/1OVHLJ8LbySMYo2yn6ZEqAA)|
+| HRNetV2-W48 | Train | Val | 65.8M | 696.2 | No | No | No | 80.9 | [GoogleDrive](https://drive.google.com/file/d/15DCds5j95hI-nsjg4eBM1G3sIUWR9tmf/view?usp=sharing)|
+| HRNetV2-W48 + OCR | Train | Val | 70.3M | 1206.4 | No | No | No | 81.6 | [GoogleDrive](https://drive.google.com/file/d/1QDxjWQhkBX_B3qVJykmtYUC3KkXVZIzT/view?usp=sharing)|
 
 2. Performance on the LIP dataset. The models are trained and tested with the input size of 473x473.
 
 | model |#Params | GFLOPs | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | 65.8M | 74.3 | No | No | Yes | 56.04 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQBEDbyqhH5SMQld)/[BaiduYun(Access Code:mjw3)](https://pan.baidu.com/s/1vJD6R47MiVzn9r_VyC5t1g)|
+| HRNetV2-W48 | 65.8M | 74.3 | No | No | Yes | 55.83 | [GoogleDrive](https://drive.google.com/file/d/19Iva2nFGJkvvY9MUs_u3pH7wd50O-L6n/view?usp=sharing)|
+| HRNetV2-W48 + OCR | 70.4M | 131.1 | No | No | Yes | 56.48 | [GoogleDrive](https://drive.google.com/file/d/1coUt0IhZ7Ift7Ch7NdeUJAueohsrhEwF/view?usp=sharing)|
+
+**Note** Currently we could only reproduce HRNet+OCR results with PyTorch 0.4.1.
 
 3. Performance on the PASCAL-Context dataset. The models are trained and tested with the input size of 480x480.
 If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 (the same as EncNet, DANet etc.).
 
 | model |num classes |#Params | GFLOPs | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | 59 classes |65.8M | 76.5 | No | Yes | Yes | 54.1 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33f5Bfbt4KmLeX8uw)/[BaiduYun(Access Code:53fj)](https://pan.baidu.com/s/1h24CgCWpkxt2W6MonrM-dQ)|
+| HRNetV2-W48 | 59 classes |65.8M | 76.5 | No | Yes | Yes | 54.1 | [GoogleDrive](https://drive.google.com/file/d/1yUcF4pxO4a2vUAdCUICF-DM2t9KT37hC/view?usp=sharing)|
+| HRNetV2-W48 + OCR | 59 classes | 70.4M | 157.8 | No | Yes | Yes | 56.2 | [GoogleDrive](https://drive.google.com/file/d/1ubHPoCErl7cYDLjjTHblMeBs1hHWBCOV/view?usp=sharing)|
 | HRNetV2-W48 | 60 classes | 65.8M | 76.5 | No | Yes | Yes | 48.3 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQEHDQrZCiv4R5mf)/[BaiduYun(Access Code:9uf8)](https://pan.baidu.com/s/1pgYt8P8ht2HOOzcA0F7Kag)|
-
-### Small models
-
-The models are initialized by the weights pretrained on the ImageNet. You can download the pretrained models from  https://github.com/HRNet/HRNet-Image-Classification.
-
-Performance on the Cityscapes dataset. The models are trained and tested with the input size of 512x1024 and 1024x2048 respectively. The results of other small models are obtained from Structured Knowledge Distillation for Semantic Segmentation(https://arxiv.org/abs/1903.04197).
-
-| model | Train Set | Test Set |#Params | GFLOPs | OHEM | Multi-scale| Flip | Distillation | mIoU | Link |
-| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| SQ | Train | Val | - | - | No | No | No | No | 59.8 | |
-| CRF-RNN | Train | Val | - | - | No | No | No | No | 62.5 | |
-| Dilation10 | Train | Val | 140.8 | - | No | No | No | No | 67.1 | |
-| ICNet | Train | Val | - | - | No | No | No | No | 70.6 | |
-| ResNet18(1.0) | Train | Val | 15.2 | 477.6 | No | No | No | No | 69.1 | |
-| ResNet18(1.0) | Train | Val | 15.2 | 477.6 | No | No | No | Yes | 72.7 | |
-| MD(Enhanced) | Train | Val | 14.4 | 240.2 | No | No | No | No | 67.3 | |
-| MD(Enhanced) | Train | Val | 14.4 | 240.2 | No | No | No | Yes | 71.9 | |
-| MobileNetV2Plus | Train | Val | 8.3 | 320.9 | No | No | No | No | 70.1 | |
-| MobileNetV2Plus | Train | Val | 8.3 | 320.9 | No | No | No | Yes | 74.5 | |
-| HRNetV2-W18-Small-v1 | Train | Val | 1.5M | 31.1 | No | No | No | No | 70.3 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gSEsg-2sxTmZL2AT?e=AqHbjh)/[BaiduYun(Access Code:63be)](https://pan.baidu.com/s/17pr-he0HEBycHtUdfqWr3g)|
-| HRNetV2-W18-Small-v2 | Train | Val | 3.9M | 71.6 | No | No | No | No | 76.2 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gSAL4OurOW0RX4JH?e=ptLwpW)/[BaiduYun(Access Code:bmn3)](https://pan.baidu.com/s/15TNGfl2tWR8GOut-bVQUvg)|
+| HRNetV2-W48 + OCR | 60 classes | 70.4M | 157.8 | No | Yes | Yes | 50.1 | [GoogleDrive](https://drive.google.com/file/d/1ZAZ94GME3wmijF7ax5bqa0P3KxNLPUXR/view?usp=sharing)|
 
 ## Quick start
 ### Install
-1. Install PyTorch=0.4.1 following the [official instructions](https://pytorch.org/)
+1. For LIP dataset, install PyTorch=0.4.1 following the [official instructions](https://pytorch.org/). For other datasets, either PyTorch 0.4.1 or 1.1.0 is OK.
 2. git clone https://github.com/HRNet/HRNet-Semantic-Segmentation $SEG_ROOT
 3. Install dependencies: pip install -r requirements.txt
 
@@ -121,13 +102,36 @@ $SEG_ROOT/data
 │   │   └── valList.txt
 ````
 
-### Train and test
-Please specify the configuration file.
+### Train and Test
+
+#### PyTorch Version Differences
+
+Note that the codebase supports both PyTorch 0.4.1 and 1.1.0, and they use different command for training. In the following context, we use `$PY_CMD` to denote different startup command.
+
+```bash
+# For PyTorch 0.4.1
+PY_CMD="python"
+# For PyTorch 1.1.0
+PY_CMD="python -m torch.distributed.launch --nproc_per_node=4"
+```
+
+
+#### Training
+
+Just specify the configuration file for `tools/train.py`.
 
 For example, train the HRNet-W48 on Cityscapes with a batch size of 12 on 4 GPUs:
 ````bash
-python tools/train.py --cfg experiments/cityscapes/seg_hrnet_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml
+$PY_CMD tools/train.py --cfg experiments/cityscapes/seg_hrnet_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml
 ````
+For example, train the HRNet-W48 + OCR on Cityscapes with a batch size of 12 on 4 GPUs:
+````bash
+$PY_CMD tools/train.py --cfg experiments/cityscapes/seg_hrnet_ocr_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml
+````
+
+Note that we only reproduce HRNet+OCR on LIP dataset using PyTorch 0.4.1. So we recommend to use PyTorch 0.4.1 if you want to train on LIP dataset.
+
+#### Testing
 
 For example, evaluating our model on the Cityscapes validation set with multi-scale and flip testing:
 ````bash
