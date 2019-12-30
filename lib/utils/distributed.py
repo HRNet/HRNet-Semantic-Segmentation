@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------------
+# Copyright (c) Microsoft
+# Licensed under the MIT License.
+# Written by Jingyi Xie (hsfzxjy@gmail.com)
+# ------------------------------------------------------------------------------
+
 import torch
 import torch.distributed as torch_dist
 

@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Copyright (c) Microsoft
 # Licensed under the MIT License.
-# Written by Ke Sun (sunk@mail.ustc.edu.cn)
+# Written by Ke Sun (sunk@mail.ustc.edu.cn), Jingyi Xie (hsfzxjy@gmail.com)
 # ------------------------------------------------------------------------------
 
 from __future__ import absolute_import
@@ -46,7 +46,8 @@ def conv3x3(in_planes, out_planes, stride=1):
 
 class SpatialGather_Module(nn.Module):
     """
-        Aggregate the context features according to the initial predicted probability distribution.
+        Aggregate the context features according to the initial 
+        predicted probability distribution.
         Employ the soft-weighted method to aggregate the context.
     """
     def __init__(self, cls_num=0, scale=1):
@@ -60,7 +61,8 @@ class SpatialGather_Module(nn.Module):
         feats = feats.view(batch_size, feats.size(1), -1)
         feats = feats.permute(0, 2, 1) # batch x hw x c 
         probs = F.softmax(self.scale * probs, dim=2)# batch x k x hw
-        ocr_context = torch.matmul(probs, feats).permute(0, 2, 1).unsqueeze(3)# batch x k x c
+        ocr_context = torch.matmul(probs, feats)\
+        .permute(0, 2, 1).unsqueeze(3)# batch x k x c
         return ocr_context
 
 
@@ -463,23 +465,25 @@ class HighResolutionNet(nn.Module):
             self.stage4_cfg, num_channels, multi_scale_output=True)
 
         last_inp_channels = np.int(np.sum(pre_stage_channels))
+        ocr_mid_channels = config.MODEL.OCR.MID_CHANNELS
+        ocr_key_channels = config.MODEL.OCR.KEY_CHANNELS
 
         self.conv3x3_ocr = nn.Sequential(
-            nn.Conv2d(last_inp_channels, 512,
+            nn.Conv2d(last_inp_channels, ocr_mid_channels,
                       kernel_size=3, stride=1, padding=1),
-            BatchNorm2d(512),
+            BatchNorm2d(ocr_mid_channels),
             nn.ReLU(inplace=relu_inplace),
         )
         self.ocr_gather_head = SpatialGather_Module(config.DATASET.NUM_CLASSES)
 
-        self.ocr_distri_head = SpatialOCR_Module(in_channels=512,
-                                                 key_channels=256,
-                                                 out_channels=512,
+        self.ocr_distri_head = SpatialOCR_Module(in_channels=ocr_mid_channels,
+                                                 key_channels=ocr_key_channels,
+                                                 out_channels=ocr_mid_channels,
                                                  scale=1,
                                                  dropout=0.05,
                                                  )
         self.cls_head = nn.Conv2d(
-            512, config.DATASET.NUM_CLASSES, kernel_size=1, stride=1, padding=0, bias=True)
+            ocr_mid_channels, config.DATASET.NUM_CLASSES, kernel_size=1, stride=1, padding=0, bias=True)
 
         self.aux_head = nn.Sequential(
             nn.Conv2d(last_inp_channels, last_inp_channels,
@@ -489,13 +493,6 @@ class HighResolutionNet(nn.Module):
             nn.Conv2d(last_inp_channels, config.DATASET.NUM_CLASSES,
                       kernel_size=1, stride=1, padding=0, bias=True)
         )
-
-        self.extra_layers = [
-            self.conv3x3_ocr,
-            self.ocr_gather_head,
-            self.ocr_distri_head,
-            self.cls_head
-        ]
         
     def _make_transition_layer(
             self, num_channels_pre_layer, num_channels_cur_layer):

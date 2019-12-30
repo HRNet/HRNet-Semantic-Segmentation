@@ -133,34 +133,34 @@ Note that we only reproduce HRNet+OCR on LIP dataset using PyTorch 0.4.1. So we 
 
 #### Testing
 
-For example, evaluating our model on the Cityscapes validation set with multi-scale and flip testing:
+For example, evaluating HRNet+OCR on the Cityscapes validation set with multi-scale and flip testing:
 ````bash
-python tools/test.py --cfg experiments/cityscapes/seg_hrnet_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml \
-                     TEST.MODEL_FILE hrnet_w48_cityscapes_cls19_1024x2048_trainset.pth \
+python tools/test.py --cfg experiments/cityscapes/seg_hrnet_ocr_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml \
+                     TEST.MODEL_FILE hrnet_ocr_cs_8162_torch11.pth \
                      TEST.SCALE_LIST 0.5,0.75,1.0,1.25,1.5,1.75 \
                      TEST.FLIP_TEST True
 ````
-Evaluating our model on the Cityscapes test set with multi-scale and flip testing:
+Evaluating HRNet+OCR on the Cityscapes test set with multi-scale and flip testing:
 ````bash
-python tools/test.py --cfg experiments/cityscapes/seg_hrnet_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml \
+python tools/test.py --cfg experiments/cityscapes/seg_hrnet_ocr_w48_train_512x1024_sgd_lr1e-2_wd5e-4_bs_12_epoch484.yaml \
                      DATASET.TEST_SET list/cityscapes/test.lst \
-                     TEST.MODEL_FILE hrnet_w48_cityscapes_cls19_1024x2048_trainset.pth \
+                     TEST.MODEL_FILE hrnet_ocr_cs_8162_torch11.pth \
                      TEST.SCALE_LIST 0.5,0.75,1.0,1.25,1.5,1.75 \
                      TEST.FLIP_TEST True
 ````
-Evaluating our model on the PASCAL-Context validation set with multi-scale and flip testing:
+Evaluating HRNet+OCR on the PASCAL-Context validation set with multi-scale and flip testing:
 ````bash
-python tools/test.py --cfg experiments/pascal_ctx/seg_hrnet_w48_cls59_480x480_sgd_lr4e-3_wd1e-4_bs_16_epoch200.yaml \
+python tools/test.py --cfg experiments/pascal_ctx/seg_hrnet_ocr_w48_cls60_520x520_sgd_lr1e-3_wd1e-4_bs_16_epoch200.yaml \
                      DATASET.TEST_SET testval \
-                     TEST.MODEL_FILE hrnet_w48_pascal_context_cls59_480x480.pth \
+                     TEST.MODEL_FILE hrnet_ocr_pascal_ctx_5618_torch11.pth \
                      TEST.SCALE_LIST 0.5,0.75,1.0,1.25,1.5,1.75,2.0 \
                      TEST.FLIP_TEST True
 ````
-Evaluating our model on the LIP validation set with flip testing:
+Evaluating HRNet+OCR on the LIP validation set with flip testing:
 ````bash
 python tools/test.py --cfg experiments/lip/seg_hrnet_w48_473x473_sgd_lr7e-3_wd5e-4_bs_40_epoch150.yaml \
                      DATASET.TEST_SET list/lip/testvalList.txt \
-                     TEST.MODEL_FILE hrnet_w48_lip_cls20_473x473.pth \
+                     TEST.MODEL_FILE hrnet_ocr_lip_5648_torch04.pth \
                      TEST.FLIP_TEST True \
                      TEST.NUM_SAMPLES 0
 ````
