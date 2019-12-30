@@ -21,7 +21,7 @@ from utils.utils import get_confusion_matrix
 from utils.utils import adjust_learning_rate
 from utils.utils import freeze_layers, open_all_layers
 
-import distributed as dist
+import utils.distributed as dist
 
 
 def reduce_tensor(inp):

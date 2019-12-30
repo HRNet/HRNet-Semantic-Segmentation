@@ -53,7 +53,7 @@ def parse_args():
     return args
 
 def get_sampler(dataset):
-    from distributed import is_distributed
+    from utils.distributed import is_distributed
     if is_distributed():
         from torch.utils.data.distributed import DistributedSampler
         return DistributedSampler(dataset)

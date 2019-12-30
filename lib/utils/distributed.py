@@ -13,9 +13,3 @@ def get_rank():
     if not torch_dist.is_initialized():
         return 0
     return torch_dist.get_rank()
-
-# def get_device():
-#     if is_distributed():
-#         return torch.device('cuda:{}'.format(get_rank()))
-#     else:
-#         return torch.cuda.current_device()
