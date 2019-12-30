@@ -69,7 +69,7 @@ def main():
                  '.get_seg_model')(config)
 
     dump_input = torch.rand(
-        (1, 3, config.TRAIN.IMAGE_SIZE[1], config.TRAIN.IMAGE_SIZE[0])
+        (1, 3, config.TEST.IMAGE_SIZE[1], config.TEST.IMAGE_SIZE[0])
     )
     logger.info(get_model_summary(model.cuda(), dump_input.cuda()))
 
