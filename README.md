@@ -17,6 +17,16 @@ HRNetV2 Segmentation models are now available. All the results are reproduced by
 
 The models are initialized by the weights pretrained on the ImageNet. You can download the pretrained models from  https://github.com/HRNet/HRNet-Image-Classification.
 
+### Memory usage and time cost
+Memory and time cost comparison for semantic segmentation on PyTorch $1.0$ in terms of training/inference memory and training/inference time. The numbers for training are obtained on a machine with $4$ V$100$ GPU cards. During training, the input size is $512\times1024$ and the batch size is $8$. The numbers for inference are obtained on a single V$100$ GPU card. The input size is $1024\times2048$.
+
+| approach | train mem | train sec./iter |infer. mem | infer sec./image | mIoU |
+| :--: | :--: | :--: | :--: | :--: | :--: | 
+| PSPNet | 14.4G | 0.837| 1.60G | 0.397 | 79.7 | 
+| DeepLabV3 | 13.3G | 0.850 | 1.15G | 0.411 | 78.5 | 
+| HRNet-W48 | 13.9G | 0.692 | 1.79G | 0.150 | 81.1 | 
+
+
 ### Big models
 
 1. Performance on the Cityscapes dataset. The models are trained and tested with the input size of 512x1024 and 1024x2048 respectively.
