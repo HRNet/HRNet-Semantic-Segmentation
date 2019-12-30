@@ -19,10 +19,9 @@ import torch.nn as nn
 import torch._utils
 import torch.nn.functional as F
 
-from config import config
-
 from .bn_helper import BatchNorm2d, BatchNorm2d_class, relu_inplace
 
+ALIGN_CORNERS = True
 BN_MOMENTUM = 0.1
 logger = logging.getLogger(__name__)
 
@@ -82,17 +81,11 @@ class _ObjectAttentionBlock(nn.Module):
                  in_channels, 
                  key_channels, 
                  scale=1, 
-                 use_gt=False,
-                 use_bg=False,
-                 fetch_attention=False, 
                  bn_type=None):
         super(_ObjectAttentionBlock, self).__init__()
         self.scale = scale
         self.in_channels = in_channels
         self.key_channels = key_channels
-        self.use_gt = use_gt
-        self.use_bg = use_bg
-        self.fetch_attention = fetch_attention
         self.pool = nn.MaxPool2d(kernel_size=(scale, scale))
         self.f_pixel = nn.Sequential(
             nn.Conv2d(in_channels=self.in_channels, out_channels=self.key_channels,
@@ -142,7 +135,7 @@ class _ObjectAttentionBlock(nn.Module):
         context = context.view(batch_size, self.key_channels, *x.size()[2:])
         context = self.f_up(context)
         if self.scale > 1:
-            context = F.interpolate(input=context, size=(h, w), mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
+            context = F.interpolate(input=context, size=(h, w), mode='bilinear', align_corners=ALIGN_CORNERS)
 
         return context
 
@@ -402,7 +395,7 @@ class HighResolutionModule(nn.Module):
                     y = y + F.interpolate(
                         self.fuse_layers[i][j](x[j]),
                         size=[height_output, width_output],
-                        mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
+                        mode='bilinear', align_corners=ALIGN_CORNERS)
                 else:
                     y = y + self.fuse_layers[i][j](x[j])
             x_fuse.append(self.relu(y))
@@ -421,6 +414,7 @@ class HighResolutionNet(nn.Module):
     def __init__(self, config, **kwargs):
         extra = config.MODEL.EXTRA
         super(HighResolutionNet, self).__init__()
+        ALIGN_CORNERS = config.MODEL.ALIGN_CORNERS
 
         # stem net
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=2, padding=1,
@@ -585,7 +579,7 @@ class HighResolutionNet(nn.Module):
 
         return nn.Sequential(*modules), num_inchannels
 
-    def forward(self, x, use_ocr=True):
+    def forward(self, x):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
@@ -627,11 +621,11 @@ class HighResolutionNet(nn.Module):
         # Upsampling
         x0_h, x0_w = x[0].size(2), x[0].size(3)
         x1 = F.interpolate(x[1], size=(x0_h, x0_w),
-                        mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
+                        mode='bilinear', align_corners=ALIGN_CORNERS)
         x2 = F.interpolate(x[2], size=(x0_h, x0_w),
-                        mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
+                        mode='bilinear', align_corners=ALIGN_CORNERS)
         x3 = F.interpolate(x[3], size=(x0_h, x0_w),
-                        mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS)
+                        mode='bilinear', align_corners=ALIGN_CORNERS)
 
         feats = torch.cat([x[0], x1, x2, x3], 1)
 
@@ -648,10 +642,7 @@ class HighResolutionNet(nn.Module):
         out = self.cls_head(feats)
 
         out_aux_seg.append(out_aux)
-        if use_ocr:
-            out_aux_seg.append(out)
-        else:
-            out_aux_seg.append(torch.zeros_like(out))
+        out_aux_seg.append(out)
 
         return out_aux_seg
 
