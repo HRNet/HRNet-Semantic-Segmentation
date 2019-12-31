@@ -150,7 +150,7 @@ python tools/test.py --cfg experiments/cityscapes/seg_hrnet_ocr_w48_train_512x10
 ````
 Evaluating HRNet+OCR on the PASCAL-Context validation set with multi-scale and flip testing:
 ````bash
-python tools/test.py --cfg experiments/pascal_ctx/seg_hrnet_ocr_w48_cls60_520x520_sgd_lr1e-3_wd1e-4_bs_16_epoch200.yaml \
+python tools/test.py --cfg experiments/pascal_ctx/seg_hrnet_ocr_w48_cls59_520x520_sgd_lr1e-3_wd1e-4_bs_16_epoch200.yaml \
                      DATASET.TEST_SET testval \
                      TEST.MODEL_FILE hrnet_ocr_pascal_ctx_5618_torch11.pth \
                      TEST.SCALE_LIST 0.5,0.75,1.0,1.25,1.5,1.75,2.0 \
