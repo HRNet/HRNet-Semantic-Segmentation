@@ -141,7 +141,7 @@ def main():
         drop_last=True,
         sampler=train_sampler)
 
-
+    extra_epoch_iters = 0
     if config.DATASET.EXTRA_TRAIN_SET:
         extra_train_dataset = eval('datasets.'+config.DATASET.DATASET)(
                     root=config.DATASET.ROOT,
