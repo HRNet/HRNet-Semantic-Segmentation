@@ -213,6 +213,7 @@ def test(config, test_dataset, testloader, model,
             image, size, name = batch
             size = size[0]
             pred = test_dataset.multi_scale_inference(
+                config,
                 model,
                 image,
                 scales=config.TEST.SCALE_LIST,
