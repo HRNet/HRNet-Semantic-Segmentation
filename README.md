@@ -4,15 +4,15 @@
 - Thanks Google and UIUC researchers. A modified HRNet combined with semantic and instance multi-scale context achieves SOTA panoptic segmentation result on the Mapillary Vista challenge. See [the paper](https://arxiv.org/pdf/1910.04751.pdf).
 - Small HRNet models for Cityscapes segmentation. Superior to MobileNetV2Plus ....
 - Rank \#1 (83.7) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). HRNet combined with an extension of [object context](https://arxiv.org/pdf/1809.00916.pdf)
-
-- Pytorch-v1.1 and the official Sync-BN supported. We have reproduced the cityscapes results on the new codebase. Please check the pytorch-v1.1 branch.
-- We have unified PyTorch 0.4.1 and 1.1.0 support into one codebase, and reproduce HRNet+OCR results on it. Please check the ocr branch.
+- We have reproduced some main results of HRNetV2-W48 + OCR in this repo.
 
 ## Introduction
 This is the official code of [high-resolution representations for Semantic Segmentation](https://arxiv.org/abs/1904.04514). 
 We augment the HRNet with a very simple segmentation head shown in the figure below. We aggregate the output representations at four different resolutions, and then use a 1x1 convolutions to fuse these representations. The output representations is fed into the classifier. We evaluate our methods on three datasets, Cityscapes, PASCAL-Context and LIP.
 
 ![](figures/seg-hrnet.png)
+
+Besides, we further combine HRNet with [Object Contextual Representation](https://arxiv.org/pdf/1909.11065.pdf) and achieve higher performance on the three datasets. The code of HRNet+OCR is contained in this branch.
 
 ## Segmentation models
 HRNetV2 Segmentation models are now available. All the results are reproduced by using this repo!!!
@@ -26,40 +26,38 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75.
 
 | model | Train Set | Test Set |#Params | GFLOPs | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | Train | Val | 65.8M | 696.2 | No | No | No | 80.9 | [GoogleDrive](https://drive.google.com/file/d/15DCds5j95hI-nsjg4eBM1G3sIUWR9tmf/view?usp=sharing)|
-| HRNetV2-W48 + OCR | Train | Val | 70.3M | 1206.4 | No | No | No | 81.6 | [GoogleDrive](https://drive.google.com/file/d/1QDxjWQhkBX_B3qVJykmtYUC3KkXVZIzT/view?usp=sharing)|
+| HRNetV2-W48 | Train | Val | 65.8M | 696.2 | No | No | No | 80.9 | [GoogleDrive](https://drive.google.com/file/d/15DCds5j95hI-nsjg4eBM1G3sIUWR9tmf/view?usp=sharing)/[BaiduYun(Access Code:pmix)](https://pan.baidu.com/s/1KyiOUOR0SYxKtJfIlD5o-w)|
+| HRNetV2-W48 + OCR | Train | Val | 70.3M | 1206.4 | No | No | No | 81.6 | [GoogleDrive](https://drive.google.com/file/d/1QDxjWQhkBX_B3qVJykmtYUC3KkXVZIzT/view?usp=sharing)/[BaiduYun(Access Code:fa6i)](https://pan.baidu.com/s/1BGNt4Xmx3yfXUS8yjde0hQ)|
+| HRNetV2-W48 + OCR | Train + Val | Test | 70.3M | 1206.4 | No | Yes | Yes | 82.3 | [GoogleDrive](https://drive.google.com/file/d/1HiB3pdFhhTtQnrM-zuKrNTmexz_7WmQa/view?usp=sharing)/[BaiduYun(Access Code:ycrk)](https://pan.baidu.com/s/16mD81UnGzjUBD-haDQfzIQ)|
 
 2. Performance on the LIP dataset. The models are trained and tested with the input size of 473x473.
 
 | model |#Params | GFLOPs | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | 65.8M | 74.3 | No | No | Yes | 55.83 | [GoogleDrive](https://drive.google.com/file/d/19Iva2nFGJkvvY9MUs_u3pH7wd50O-L6n/view?usp=sharing)|
-| HRNetV2-W48 + OCR | 70.4M | 131.1 | No | No | Yes | 56.48 | [GoogleDrive](https://drive.google.com/file/d/1coUt0IhZ7Ift7Ch7NdeUJAueohsrhEwF/view?usp=sharing)|
+| HRNetV2-W48 | 65.8M | 74.3 | No | No | Yes | 55.83 | [GoogleDrive](https://drive.google.com/file/d/19Iva2nFGJkvvY9MUs_u3pH7wd50O-L6n/view?usp=sharing)/[BaiduYun(Access Code:fahi)](https://pan.baidu.com/s/15DamFiGEoxwDDF1TwuZdnA)|
+| HRNetV2-W48 + OCR | 70.4M | 131.1 | No | No | Yes | 56.48 | [GoogleDrive](https://drive.google.com/file/d/1coUt0IhZ7Ift7Ch7NdeUJAueohsrhEwF/view?usp=sharing)/[BaiduYun(Access Code:xex2)](https://pan.baidu.com/s/1dFYSR2bahRnvpIOdh88kOQ)|
 
-**Note** Currently we could only reproduce HRNet+OCR results with PyTorch 0.4.1.
+**Note** Currently we could only reproduce HRNet+OCR results on LIP dataset with PyTorch 0.4.1.
 
-3. Performance on the PASCAL-Context dataset. The models are trained and tested with the input size of 480x480.
+3. Performance on the PASCAL-Context dataset. The models are trained and tested with the input size of 520x520.
 If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 (the same as EncNet, DANet etc.).
 
 | model |num classes |#Params | GFLOPs | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | 59 classes |65.8M | 76.5 | No | Yes | Yes | 54.1 | [GoogleDrive](https://drive.google.com/file/d/1yUcF4pxO4a2vUAdCUICF-DM2t9KT37hC/view?usp=sharing)|
-| HRNetV2-W48 + OCR | 59 classes | 70.4M | 157.8 | No | Yes | Yes | 56.2 | [GoogleDrive](https://drive.google.com/file/d/1ubHPoCErl7cYDLjjTHblMeBs1hHWBCOV/view?usp=sharing)|
+| HRNetV2-W48 | 59 classes |65.8M | 76.5 | No | Yes | Yes | 54.1 | [GoogleDrive](https://drive.google.com/file/d/1yUcF4pxO4a2vUAdCUICF-DM2t9KT37hC/view?usp=sharing)/[BaiduYun(Access Code:wz6v)](https://pan.baidu.com/s/1m0MqpHSk0SX380EYEMawSA)|
+| HRNetV2-W48 + OCR | 59 classes | 70.4M | 157.8 | No | Yes | Yes | 56.2 | [GoogleDrive](https://drive.google.com/file/d/1ubHPoCErl7cYDLjjTHblMeBs1hHWBCOV/view?usp=sharing)/[BaiduYun(Access Code:yyxh)](https://pan.baidu.com/s/1XYP54gr3XB76tHmCcKdU9g)|
 | HRNetV2-W48 | 60 classes | 65.8M | 76.5 | No | Yes | Yes | 48.3 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQEHDQrZCiv4R5mf)/[BaiduYun(Access Code:9uf8)](https://pan.baidu.com/s/1pgYt8P8ht2HOOzcA0F7Kag)|
-| HRNetV2-W48 + OCR | 60 classes | 70.4M | 157.8 | No | Yes | Yes | 50.1 | [GoogleDrive](https://drive.google.com/file/d/1ZAZ94GME3wmijF7ax5bqa0P3KxNLPUXR/view?usp=sharing)|
+| HRNetV2-W48 + OCR | 60 classes | 70.4M | 157.8 | No | Yes | Yes | 50.1 | [GoogleDrive](https://drive.google.com/file/d/1ZAZ94GME3wmijF7ax5bqa0P3KxNLPUXR/view?usp=sharing)/[BaiduYun(Access Code:gtkb)](https://pan.baidu.com/s/13AYjwzh1LJSlipJwNpJ3Uw)|
 
 ## Quick start
 ### Install
 1. For LIP dataset, install PyTorch=0.4.1 following the [official instructions](https://pytorch.org/). For other datasets, either PyTorch 0.4.1 or 1.1.0 is OK.
-2. git clone https://github.com/HRNet/HRNet-Semantic-Segmentation $SEG_ROOT
+2. `git clone https://github.com/HRNet/HRNet-Semantic-Segmentation $SEG_ROOT`
 3. Install dependencies: pip install -r requirements.txt
 
 If you want to train and evaluate our models on PASCAL-Context, you need to install [details](https://github.com/zhanghang1989/detail-api).
 ````bash
-# PASCAL_CTX=/path/to/PASCAL-Context/
-git clone https://github.com/zhanghang1989/detail-api.git $PASCAL_CTX
-cd $PASCAL_CTX/PythonAPI
-python setup.py install
+pip install git+https://github.com/zhanghang1989/detail-api.git#subdirectory=PythonAPI
 ````
 
 ### Data preparation
