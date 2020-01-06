@@ -1,10 +1,11 @@
 # High-resolution networks (HRNets) for Semantic Segmentation
 
 ## News
+- We have reproduced main results of HRNetV2-W48 + OCR in this repo.
 - Thanks Google and UIUC researchers. A modified HRNet combined with semantic and instance multi-scale context achieves SOTA panoptic segmentation result on the Mapillary Vista challenge. See [the paper](https://arxiv.org/pdf/1910.04751.pdf).
 - Small HRNet models for Cityscapes segmentation. Superior to MobileNetV2Plus ....
 - Rank \#1 (83.7) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). HRNet combined with an extension of [object context](https://arxiv.org/pdf/1809.00916.pdf)
-- We have reproduced some main results of HRNetV2-W48 + OCR in this repo.
+
 
 ## Introduction
 This is the official code of [high-resolution representations for Semantic Segmentation](https://arxiv.org/abs/1904.04514). 
