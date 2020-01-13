@@ -33,8 +33,8 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75.
 
 2. Performance on the LIP dataset. The models are trained and tested with the input size of 473x473.
 
-| model |#Params | Multi-scale| Flip | mIoU | Link |
-| :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
+| model | OHEM | Multi-scale| Flip | mIoU | Link |
+| :--: | :--: | :--: | :--: | :--: | :--: |
 | HRNetV2-W48 | No | No | Yes | 55.83 | [GoogleDrive](https://drive.google.com/file/d/19Iva2nFGJkvvY9MUs_u3pH7wd50O-L6n/view?usp=sharing)/[BaiduYun(Access Code:fahi)](https://pan.baidu.com/s/15DamFiGEoxwDDF1TwuZdnA)|
 | HRNetV2-W48 + OCR | No | No | Yes | 56.48 | [GoogleDrive](https://drive.google.com/file/d/1coUt0IhZ7Ift7Ch7NdeUJAueohsrhEwF/view?usp=sharing)/[BaiduYun(Access Code:xex2)](https://pan.baidu.com/s/1dFYSR2bahRnvpIOdh88kOQ)|
 
