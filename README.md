@@ -212,6 +212,7 @@ If you find this work or code is helpful in your research, please cite:
 ## Reference
 [1] Deep High-Resolution Representation Learning for Visual Recognition. Jingdong Wang, Ke Sun, Tianheng Cheng, 
     Borui Jiang, Chaorui Deng, Yang Zhao, Dong Liu, Yadong Mu, Mingkui Tan, Xinggang Wang, Wenyu Liu, Bin Xiao. [download](https://arxiv.org/pdf/1908.07919.pdf)
+    
 [2] Object-Contextual Representations for Semantic Segmentation. Yuhui Yuan, Xilin Chen, Jingdong Wang. [download](https://arxiv.org/pdf/1909.11065.pdf)
 
 ## Acknowledgement
