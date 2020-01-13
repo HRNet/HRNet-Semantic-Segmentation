@@ -6,7 +6,7 @@
 - The PyTroch 1.1 version is available at [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/pytorch-v1.1).
 
 ## News
-- HRNet + OCR + SegFix: Rank \#1 (84.5) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). OCR: object contextual represenations [pdf] (https://arxiv.org/pdf/1909.11065.pdf). ***HRNet + OCR ia reproduced at [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/HRNet-OCR)***.
+- HRNet + OCR + SegFix: Rank \#1 (84.5) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). OCR: object contextual represenations [pdf] (https://arxiv.org/pdf/1909.11065.pdf). ***HRNet + OCR is reproduced at [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/HRNet-OCR)***.
 - Thanks Google and UIUC researchers. A modified HRNet combined with semantic and instance multi-scale context achieves SOTA panoptic segmentation result on the Mapillary Vista challenge. See [the paper](https://arxiv.org/pdf/1910.04751.pdf).
 - Small HRNet models for Cityscapes segmentation. Superior to MobileNetV2Plus ....
 - Rank \#1 (83.7) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). HRNet combined with an extension of [object context](https://arxiv.org/pdf/1809.00916.pdf)
