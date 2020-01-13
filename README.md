@@ -203,6 +203,7 @@ If you find this work or code is helpful in your research, please cite:
     Borui Jiang, Chaorui Deng, Yang Zhao, Dong Liu, Yadong Mu, Mingkui Tan, Xinggang Wang, Wenyu Liu, Bin Xiao. [download](https://arxiv.org/pdf/1908.07919.pdf)
 
 ## Acknowledgement
-We adopt sync-bn implemented by [InplaceABN](https://github.com/mapillary/inplace_abn) for PyTorch 0.4.1 experiments.
+We adopt sync-bn implemented by [InplaceABN](https://github.com/mapillary/inplace_abn) for PyTorch 0.4.1 experiments and the official 
+sync-bn provided by PyTorch for PyTorch 1.10 experiments.
 
 We adopt data precosessing on the PASCAL-Context dataset, implemented by [PASCAL API](https://github.com/zhanghang1989/detail-api).
