@@ -1,6 +1,7 @@
 # High-resolution networks (HRNets) for Semantic Segmentation
 
 ## Branches
+- HRNet + OCR + SegFix: Rank \#1 (84.5) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). OCR: object contextual represenations [pdf] (https://arxiv.org/pdf/1909.11065.pdf)
 - This is the implementation for PyTroch 0.4.1.
 - The PyTroch 1.1 version is available at [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/pytorch-v1.1).
 
