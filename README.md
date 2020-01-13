@@ -2,7 +2,7 @@
 
 ## Branches
 - This is the implementation for PyTroch 0.4.1.
-- The PyTroch 1.1 version is available at .[here.](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/pytorch-v1.1).
+- The PyTroch 1.1 version is available at [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/pytorch-v1.1).
 
 ## News
 - Thanks Google and UIUC researchers. A modified HRNet combined with semantic and instance multi-scale context achieves SOTA panoptic segmentation result on the Mapillary Vista challenge. See [the paper](https://arxiv.org/pdf/1910.04751.pdf).
