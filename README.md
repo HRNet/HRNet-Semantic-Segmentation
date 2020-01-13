@@ -1,4 +1,8 @@
 # High-resolution networks (HRNets) for Semantic Segmentation
+## Branches
+- This is the implementation for HRNet + OCR.
+- The PyTroch 1.1 version ia available at [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/pytorch-v1.1).
+- The PyTroch 0.4.1 version is available at [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/master).
 
 ## News
 - HRNet + OCR + SegFix: Rank \#1 (84.5) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). OCR: object contextual represenations [pdf] (https://arxiv.org/pdf/1909.11065.pdf). HRNet + OCR ia available at [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/HRNet-OCR).
