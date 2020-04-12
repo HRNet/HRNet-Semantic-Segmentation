@@ -37,6 +37,7 @@ def parse_args():
                         help='experiment configure file name',
                         required=True,
                         type=str)
+    parser.add_argument("--local_rank", type=int, default=0)
     parser.add_argument('opts',
                         help="Modify config options using the command-line",
                         default=None,
@@ -60,6 +61,9 @@ def main():
     cudnn.benchmark = config.CUDNN.BENCHMARK
     cudnn.deterministic = config.CUDNN.DETERMINISTIC
     cudnn.enabled = config.CUDNN.ENABLED
+    gpus = list(config.GPUS)
+    distributed = len(gpus) > 1
+    device = torch.device('cuda:{}'.format(args.local_rank))
 
     # build model
     model = eval('models.'+config.MODEL.NAME +
@@ -87,8 +91,14 @@ def main():
     model_dict.update(pretrained_dict)
     model.load_state_dict(model_dict)
 
-    gpus = list(config.GPUS)
-    model = nn.DataParallel(model, device_ids=gpus).cuda()
+    model.to(device)
+    if (True): # original code is [if distributed:]
+        torch.cuda.set_device(args.local_rank)
+        torch.distributed.init_process_group(
+            backend="nccl", init_method="env://",
+        )
+    model = nn.parallel.DistributedDataParallel(
+        model, device_ids=[args.local_rank], output_device=args.local_rank)
 
     # prepare data
     test_size = (config.TEST.IMAGE_SIZE[1], config.TEST.IMAGE_SIZE[0])
