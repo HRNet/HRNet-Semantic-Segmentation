@@ -52,6 +52,30 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 
 | HRNetV2-W48 | 60 classes | No | Yes | Yes | 48.3 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQEHDQrZCiv4R5mf)/[BaiduYun(Access Code:9uf8)](https://pan.baidu.com/s/1pgYt8P8ht2HOOzcA0F7Kag)|
 | HRNetV2-W48 + OCR | 60 classes | No | Yes | Yes | 50.1 | [GoogleDrive](https://drive.google.com/file/d/1ZAZ94GME3wmijF7ax5bqa0P3KxNLPUXR/view?usp=sharing)/[BaiduYun(Access Code:gtkb)](https://pan.baidu.com/s/13AYjwzh1LJSlipJwNpJ3Uw)|
 
+4. Performance on the COCO-Stuff dataset. The models are trained and tested with the input size of 520x520.
+If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 (the same as EncNet, DANet etc.).
+
+| model | OHEM | Multi-scale| Flip | mIoU | Link |
+| :--: | :--: | :--: | :--: | :--: | :--: |
+| HRNetV2-W48 | Yes | No | No | 36.2 | [GoogleDrive](https://drive.google.com/open?id=1tXSWTCNyG4ETLfROJM1L6Lswg8wj5WvL)/[BaiduYun(Access Code:92gw)](https://pan.baidu.com/s/1VAV6KThH1Irzv9HZgLWE2Q)|
+| HRNetV2-W48 + OCR | Yes | No | No | 39.7 | [GoogleDrive](https://drive.google.com/open?id=1yMJ7-1-7LbbWotrqj1S4vM6M6Nj0feXv)/[BaiduYun(Access Code:sjc4)](https://pan.baidu.com/s/1HFSYyVwKBG3E6y76gcPjDA)|
+| HRNetV2-W48 | Yes | Yes | Yes | 37.9 | [GoogleDrive](https://drive.google.com/open?id=1tXSWTCNyG4ETLfROJM1L6Lswg8wj5WvL)/[BaiduYun(Access Code:92gw)](https://pan.baidu.com/s/1VAV6KThH1Irzv9HZgLWE2Q) |
+| HRNetV2-W48 + OCR | Yes | Yes | Yes | 40.6 | [GoogleDrive](https://drive.google.com/open?id=1yMJ7-1-7LbbWotrqj1S4vM6M6Nj0feXv)/[BaiduYun(Access Code:sjc4)](https://pan.baidu.com/s/1HFSYyVwKBG3E6y76gcPjDA) |
+
+**Note** Currently we reproduce HRNet+OCR results on COCO-Stuff dataset with PyTorch 0.4.1, but PyTorch 1.1.0 may also be OK.
+
+5. Performance on the ADE20K dataset. The models are trained and tested with the input size of 520x520.
+If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 (the same as EncNet, DANet etc.).
+
+| model | OHEM | Multi-scale| Flip | mIoU | Link |
+| :--: | :--: | :--: | :--: | :--: | :--: |
+| HRNetV2-W48 | Yes | No | No | 43.1 | [GoogleDrive](https://drive.google.com/open?id=1OlTm8k3fIQpZXmOKXipd5BdxVYtbSWt-)/[BaiduYun(Access Code:f6xf)](https://pan.baidu.com/s/11neVkzxx27qS2-mPFW9dfg)|
+| HRNetV2-W48 + OCR | Yes | No | No | 44.5 | [GoogleDrive](https://drive.google.com/open?id=1JEzwhkcPUc-HXnq5ErbWy0vWnNpI9sZ8)/[BaiduYun(Access Code:peg4)](https://pan.baidu.com/s/1HLhjiLIdgaOHs0SzEtkgkQ)|
+| HRNetV2-W48 | Yes | Yes | Yes | 44.2 | [GoogleDrive](https://drive.google.com/open?id=1OlTm8k3fIQpZXmOKXipd5BdxVYtbSWt-)/[BaiduYun(Access Code:f6xf)](https://pan.baidu.com/s/11neVkzxx27qS2-mPFW9dfg) |
+| HRNetV2-W48 + OCR | Yes | Yes | Yes | 45.5 | [GoogleDrive](https://drive.google.com/open?id=1JEzwhkcPUc-HXnq5ErbWy0vWnNpI9sZ8)/[BaiduYun(Access Code:peg4)](https://pan.baidu.com/s/1HLhjiLIdgaOHs0SzEtkgkQ) |
+
+**Note** Currently we reproduce HRNet+OCR results on ADE20K dataset with PyTorch 0.4.1, but PyTorch 1.1.0 may also be OK.
+
 ## Quick start
 ### Install
 1. For LIP dataset, install PyTorch=0.4.1 following the [official instructions](https://pytorch.org/). For Cityscapes and PASCAL-Context, we use PyTorch=1.1.0.
@@ -92,6 +116,20 @@ $SEG_ROOT/data
 │   ├── res
 │   └── VOCdevkit
 │       └── VOC2010
+├── cocostuff
+│   ├── train
+│   │   ├── image
+│   │   └── label
+│   └── val
+│       ├── image
+│       └── label
+├── ade20k
+│   ├── train
+│   │   ├── image
+│   │   └── label
+│   └── val
+│       ├── image
+│       └── label
 ├── list
 │   ├── cityscapes
 │   │   ├── test.lst
@@ -171,6 +209,22 @@ python tools/test.py --cfg experiments/lip/seg_hrnet_w48_473x473_sgd_lr7e-3_wd5e
                      TEST.MODEL_FILE hrnet_ocr_lip_5648_torch04.pth \
                      TEST.FLIP_TEST True \
                      TEST.NUM_SAMPLES 0
+````
+Evaluating HRNet+OCR on the COCO-Stuff validation set with multi-scale and flip testing:
+````bash
+python tools/test.py --cfg experiments/cocostuff/seg_hrnet_ocr_w48_520x520_ohem_sgd_lr1e-3_wd1e-4_bs_16_epoch110.yaml \
+                     DATASET.TEST_SET list/cocostuff/testval.lst \
+                     TEST.MODEL_FILE hrnet_ocr_cocostuff_3965_torch04.pth \
+                     TEST.SCALE_LIST 0.5,0.75,1.0,1.25,1.5,1.75,2.0 \
+                     TEST.MULTI_SCALE True TEST.FLIP_TEST True
+````
+Evaluating HRNet+OCR on the ADE20K validation set with multi-scale and flip testing:
+````bash
+python tools/test.py --cfg experiments/ade20k/seg_hrnet_ocr_w48_520x520_ohem_sgd_lr2e-2_wd1e-4_bs_16_epoch120.yaml \
+                     DATASET.TEST_SET list/cocostuff/testval.lst \
+                     TEST.MODEL_FILE hrnet_ocr_ade20k_4451_torch04.pth \
+                     TEST.SCALE_LIST 0.5,0.75,1.0,1.25,1.5,1.75,2.0 \
+                     TEST.MULTI_SCALE True TEST.FLIP_TEST True
 ````
 
 ## Other applications of HRNet

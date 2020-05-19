@@ -101,6 +101,44 @@ class BaseDataset(data.Dataset):
 
         return image, label
 
+    def resize_short_length(self, image, label=None, short_length=None, fit_stride=None, return_padding=False):
+        h, w = image.shape[:2]
+        if h < w:
+            new_h = short_length
+            new_w = np.int(w * short_length / h + 0.5)
+        else:
+            new_w = short_length
+            new_h = np.int(h * short_length / w + 0.5)        
+        image = cv2.resize(image, (new_w, new_h),
+                           interpolation=cv2.INTER_LINEAR)
+        pad_w, pad_h = 0, 0
+        if fit_stride is not None:
+            pad_w = 0 if (new_w % fit_stride == 0) else fit_stride - (new_w % fit_stride)
+            pad_h = 0 if (new_h % fit_stride == 0) else fit_stride - (new_h % fit_stride)
+            image = cv2.copyMakeBorder(
+                image, 0, pad_h, 0, pad_w, 
+                cv2.BORDER_CONSTANT, value=tuple(x * 255 for x in self.mean[::-1])
+            )
+
+        if label is not None:
+            label = cv2.resize(
+                label, (new_w, new_h),
+                interpolation=cv2.INTER_NEAREST)
+            if pad_h > 0 or pad_w > 0:
+                label = cv2.copyMakeBorder(
+                    label, 0, pad_h, 0, pad_w, 
+                    cv2.BORDER_CONSTANT, value=self.ignore_label
+                )
+            if return_padding:
+                return image, label, (pad_h, pad_w)
+            else:
+                return image, label
+        else:
+            if return_padding:
+                return image, (pad_h, pad_w)
+            else:
+                return image  
+
     def random_brightness(self, img):
         if not config.TRAIN.RANDOM_BRIGHTNESS:
             return img
@@ -142,6 +180,12 @@ class BaseDataset(data.Dataset):
             )
 
         return image, label
+
+    def reduce_zero_label(self, labelmap):
+        labelmap = np.array(labelmap)
+        encoded_labelmap = labelmap - 1
+
+        return encoded_labelmap
 
     def inference(self, config, model, image, flip=False):
         size = image.size()
