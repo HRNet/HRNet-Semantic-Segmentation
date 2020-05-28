@@ -62,7 +62,7 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 
 | HRNetV2-W48 | Yes | Yes | Yes | 37.9 | [GoogleDrive](https://drive.google.com/open?id=1tXSWTCNyG4ETLfROJM1L6Lswg8wj5WvL)/[BaiduYun(Access Code:92gw)](https://pan.baidu.com/s/1VAV6KThH1Irzv9HZgLWE2Q) |
 | HRNetV2-W48 + OCR | Yes | Yes | Yes | 40.6 | [GoogleDrive](https://drive.google.com/open?id=1yMJ7-1-7LbbWotrqj1S4vM6M6Nj0feXv)/[BaiduYun(Access Code:sjc4)](https://pan.baidu.com/s/1HFSYyVwKBG3E6y76gcPjDA) |
 
-**Note** Currently we reproduce HRNet+OCR results on COCO-Stuff dataset with PyTorch 0.4.1, but PyTorch 1.1.0 may also be OK.
+**Note** We reproduce HRNet+OCR results on COCO-Stuff dataset with PyTorch 0.4.1.
 
 5. Performance on the ADE20K dataset. The models are trained and tested with the input size of 520x520.
 If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 (the same as EncNet, DANet etc.).
@@ -74,7 +74,7 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 
 | HRNetV2-W48 | Yes | Yes | Yes | 44.2 | [GoogleDrive](https://drive.google.com/open?id=1OlTm8k3fIQpZXmOKXipd5BdxVYtbSWt-)/[BaiduYun(Access Code:f6xf)](https://pan.baidu.com/s/11neVkzxx27qS2-mPFW9dfg) |
 | HRNetV2-W48 + OCR | Yes | Yes | Yes | 45.5 | [GoogleDrive](https://drive.google.com/open?id=1JEzwhkcPUc-HXnq5ErbWy0vWnNpI9sZ8)/[BaiduYun(Access Code:peg4)](https://pan.baidu.com/s/1HLhjiLIdgaOHs0SzEtkgkQ) |
 
-**Note** Currently we reproduce HRNet+OCR results on ADE20K dataset with PyTorch 0.4.1, but PyTorch 1.1.0 may also be OK.
+**Note** We reproduce HRNet+OCR results on ADE20K dataset with PyTorch 0.4.1.
 
 ## Quick start
 ### Install
