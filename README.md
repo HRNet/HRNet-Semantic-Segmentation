@@ -5,7 +5,7 @@
 - The PyTroch 0.4.1 version is available [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/master).
 
 ## News
-- [2020/07] Our paper is accepted by ECCV 2020: [Object-Contextual Representations for Semantic Segmentation](https://arxiv.org/pdf/1909.11065.pdf)
+- [2020/07] Our paper is accepted by ECCV 2020: [Object-Contextual Representations for Semantic Segmentation](https://arxiv.org/pdf/1909.11065.pdf). Notably, the reseachers from Nvidia set a new state-of-the-art performance on Cityscapes leaderboard: [85.4%](https://www.cityscapes-dataset.com/method-details/?submissionID=7836) via combining our HRNet + OCR with a new [hierarchical mult-scale attention scheme](https://arxiv.org/abs/2005.10821). 
 - [2020/03/13] Our paper is accepted by TPAMI: [Deep High-Resolution Representation Learning for Visual Recognition](https://arxiv.org/pdf/1908.07919.pdf).
 - HRNet + OCR + SegFix: Rank \#1 (84.5) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). OCR: object contextual represenations [pdf](https://arxiv.org/pdf/1909.11065.pdf). ***HRNet + OCR is reproduced [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/HRNet-OCR)***.
 - Thanks Google and UIUC researchers. A modified HRNet combined with semantic and instance multi-scale context achieves SOTA panoptic segmentation result on the Mapillary Vista challenge. See [the paper](https://arxiv.org/pdf/1910.04751.pdf).
@@ -18,9 +18,27 @@
 This is the official code of [high-resolution representations for Semantic Segmentation](https://arxiv.org/abs/1904.04514). 
 We augment the HRNet with a very simple segmentation head shown in the figure below. We aggregate the output representations at four different resolutions, and then use a 1x1 convolutions to fuse these representations. The output representations is fed into the classifier. We evaluate our methods on three datasets, Cityscapes, PASCAL-Context and LIP.
 
-![](figures/seg-hrnet.png)
+<!-- ![](figures/seg-hrnet.png) -->
+<figure>
+  <text-align: center;>
+  <img src="./figures/seg-hrnet.png" alt="hrnet" title="Framework of Object Contextual Representation" width="900" height="200" />
+  <figcaption>Fig.1 - An example of a high-resolution network. Only the main body is illustrated, and the stem (two stride-2 3 × 3 convolutions) is not included.
+  There are four stages. The 1st stage consists of high-resolution convolutions. The 2nd (3rd, 4th) stage repeats two-resolution (three-resolution,
+  four-resolution) blocks.
+</figcaption>
+</figure>
 
-Besides, we further combine HRNet with [Object Contextual Representation](https://arxiv.org/pdf/1909.11065.pdf) and achieve higher performance on the three datasets. The code of HRNet+OCR is contained in this branch.
+Besides, we further combine HRNet with [Object Contextual Representation](https://arxiv.org/pdf/1909.11065.pdf) and achieve higher performance on the three datasets. The code of HRNet+OCR is contained in this branch. We illustrate the overall framework of OCR in the Figure as shown below:
+
+<figure>
+  <text-align: center;>
+  <img src="./figures/OCR.PNG" alt="OCR" title="Framework of Object Contextual Representation" width="900" height="200" />
+  <figcaption>Fig.2 - Illustrating the pipeline of OCR. (i) form the soft object regions in the
+  pink dashed box. (ii) estimate the object region representations in the purple dashed box.
+  (iii) compute the object contextual representations and the augmented representations
+  in the orange dashed box.
+</figcaption>
+</figure>
 
 ## Segmentation models
 The models are initialized by the weights pretrained on the ImageNet. You can download the pretrained models from  https://github.com/HRNet/HRNet-Image-Classification. *Slightly different, we use align_corners = True for upsampling in HRNet*. 
@@ -255,13 +273,10 @@ If you find this work or code is helpful in your research, please cite:
 
 @article{YuanCW19,
   title={Object-Contextual Representations for Semantic Segmentation},
-  author={Yuhui Yuan and Xilin Chen and Jingdong Wang},
-  journal   = {CoRR},
-  volume    = {abs/1909.11065},
-  year={2019}
+  author={Yuan, Yuhui and Chen, Xilin and Wang, Jingdong},
+  booktitle = {ECCV},
+  year={2020}
 }
-
-
 ````
 
 ## Reference
