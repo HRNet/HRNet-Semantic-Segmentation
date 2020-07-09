@@ -21,10 +21,7 @@ We augment the HRNet with a very simple segmentation head shown in the figure be
 <!-- ![](figures/seg-hrnet.png) -->
 <figure>
   <text-align: center;>
-  <img src="./figures/seg-hrnet.png" alt="hrnet" title="Framework of Object Contextual Representation" width="900" height="200" />
-  <figcaption>Fig.1 - An example of a high-resolution network. Only the main body is illustrated, and the stem (two stride-2 3 × 3 convolutions) is not included.
-  There are four stages. The 1st stage consists of high-resolution convolutions. The 2nd (3rd, 4th) stage repeats two-resolution (three-resolution,
-  four-resolution) blocks.
+  <img src="./figures/seg-hrnet.png" alt="hrnet" title="" width="900" height="150" />
 </figcaption>
 </figure>
 
@@ -32,12 +29,7 @@ Besides, we further combine HRNet with [Object Contextual Representation](https:
 
 <figure>
   <text-align: center;>
-  <img src="./figures/OCR.PNG" alt="OCR" title="Framework of Object Contextual Representation" width="900" height="200" />
-  <figcaption>Fig.2 - Illustrating the pipeline of OCR. (i) form the soft object regions in the
-  pink dashed box. (ii) estimate the object region representations in the purple dashed box.
-  (iii) compute the object contextual representations and the augmented representations
-  in the orange dashed box.
-</figcaption>
+  <img src="./figures/OCR.PNG" alt="OCR" title="" width="900" height="200" />
 </figure>
 
 ## Segmentation models
