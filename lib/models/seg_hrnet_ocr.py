@@ -38,6 +38,7 @@ class ModuleHelper:
     def BatchNorm2d(*args, **kwargs):
         return BatchNorm2d
 
+
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
@@ -141,6 +142,7 @@ class _ObjectAttentionBlock(nn.Module):
 
         return context
 
+
 class ObjectAttentionBlock2D(_ObjectAttentionBlock):
     def __init__(self, 
                  in_channels, 
@@ -184,6 +186,7 @@ class SpatialOCR_Module(nn.Module):
         output = self.conv_bn_dropout(torch.cat([context, feats], 1))
 
         return output
+
 
 class BasicBlock(nn.Module):
     expansion = 1

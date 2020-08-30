@@ -5,7 +5,9 @@
 - The PyTroch 0.4.1 version is available [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/master).
 
 ## News
-- [2020/07] Our paper is accepted by ECCV 2020: [Object-Contextual Representations for Semantic Segmentation](https://arxiv.org/pdf/1909.11065.pdf). Notably, the reseachers from Nvidia set a new state-of-the-art performance on Cityscapes leaderboard: [85.4%](https://www.cityscapes-dataset.com/method-details/?submissionID=7836) via combining our HRNet + OCR with a new [hierarchical mult-scale attention scheme](https://arxiv.org/abs/2005.10821). 
+- [2020/08/16] [MMSegmentation](https://github.com/open-mmlab/mmsegmentation) has supported our HRNet + OCR.
+- [2020/07/20] The researchers from AInnovation have achieved **Rank#1** on [ADE20K Leaderboard](http://sceneparsing.csail.mit.edu/) via training our HRNet + OCR with a semi-supervised learning scheme. More details are in their [Technical Report](https://arxiv.org/pdf/2007.10591.pdf).
+- [2020/07/09] Our paper is accepted by ECCV 2020: [Object-Contextual Representations for Semantic Segmentation](https://arxiv.org/pdf/1909.11065.pdf). Notably, the reseachers from Nvidia set a new state-of-the-art performance on Cityscapes leaderboard: [85.4%](https://www.cityscapes-dataset.com/method-details/?submissionID=7836) via combining our HRNet + OCR with a new [hierarchical mult-scale attention scheme](https://arxiv.org/abs/2005.10821). 
 - [2020/03/13] Our paper is accepted by TPAMI: [Deep High-Resolution Representation Learning for Visual Recognition](https://arxiv.org/pdf/1908.07919.pdf).
 - HRNet + OCR + SegFix: Rank \#1 (84.5) in [Cityscapes leaderboard](https://www.cityscapes-dataset.com/benchmarks/). OCR: object contextual represenations [pdf](https://arxiv.org/pdf/1909.11065.pdf). ***HRNet + OCR is reproduced [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/HRNet-OCR)***.
 - Thanks Google and UIUC researchers. A modified HRNet combined with semantic and instance multi-scale context achieves SOTA panoptic segmentation result on the Mapillary Vista challenge. See [the paper](https://arxiv.org/pdf/1910.04751.pdf).
