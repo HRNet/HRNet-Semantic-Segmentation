@@ -234,7 +234,7 @@ python tools/test.py --cfg experiments/cocostuff/seg_hrnet_ocr_w48_520x520_ohem_
 Evaluating HRNet+OCR on the ADE20K validation set with multi-scale and flip testing:
 ````bash
 python tools/test.py --cfg experiments/ade20k/seg_hrnet_ocr_w48_520x520_ohem_sgd_lr2e-2_wd1e-4_bs_16_epoch120.yaml \
-                     DATASET.TEST_SET list/cocostuff/testval.lst \
+                     DATASET.TEST_SET list/ade20k/testval.lst \
                      TEST.MODEL_FILE hrnet_ocr_ade20k_4451_torch04.pth \
                      TEST.SCALE_LIST 0.5,0.75,1.0,1.25,1.5,1.75,2.0 \
                      TEST.MULTI_SCALE True TEST.FLIP_TEST True
