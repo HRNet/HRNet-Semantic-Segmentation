@@ -42,16 +42,16 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75.
 
 | model | Train Set | Test Set | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | Train | Val | No | No | No | 80.9 | [GoogleDrive](https://drive.google.com/file/d/15DCds5j95hI-nsjg4eBM1G3sIUWR9tmf/view?usp=sharing)/[BaiduYun(Access Code:pmix)](https://pan.baidu.com/s/1KyiOUOR0SYxKtJfIlD5o-w)|
-| HRNetV2-W48 + OCR | Train | Val | No | No | No | 81.6 | [GoogleDrive](https://drive.google.com/file/d/1QDxjWQhkBX_B3qVJykmtYUC3KkXVZIzT/view?usp=sharing)/[BaiduYun(Access Code:fa6i)](https://pan.baidu.com/s/1BGNt4Xmx3yfXUS8yjde0hQ)|
-| HRNetV2-W48 + OCR | Train + Val | Test | No | Yes | Yes | 82.3 | [GoogleDrive](https://drive.google.com/file/d/1HiB3pdFhhTtQnrM-zuKrNTmexz_7WmQa/view?usp=sharing)/[BaiduYun(Access Code:ycrk)](https://pan.baidu.com/s/16mD81UnGzjUBD-haDQfzIQ)|
+| HRNetV2-W48 | Train | Val | No | No | No | 80.9 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_cs_8090_torch11.pth)/[BaiduYun(Access Code:pmix)](https://pan.baidu.com/s/1KyiOUOR0SYxKtJfIlD5o-w)|
+| HRNetV2-W48 + OCR | Train | Val | No | No | No | 81.6 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_cs_8162_torch11.pth)/[BaiduYun(Access Code:fa6i)](https://pan.baidu.com/s/1BGNt4Xmx3yfXUS8yjde0hQ)|
+| HRNetV2-W48 + OCR | Train + Val | Test | No | Yes | Yes | 82.3 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_cs_trainval_8227_torch11.pth)/[BaiduYun(Access Code:ycrk)](https://pan.baidu.com/s/16mD81UnGzjUBD-haDQfzIQ)|
 
 2. Performance on the LIP dataset. The models are trained and tested with the input size of 473x473.
 
 | model | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | No | No | Yes | 55.83 | [GoogleDrive](https://drive.google.com/file/d/19Iva2nFGJkvvY9MUs_u3pH7wd50O-L6n/view?usp=sharing)/[BaiduYun(Access Code:fahi)](https://pan.baidu.com/s/15DamFiGEoxwDDF1TwuZdnA)|
-| HRNetV2-W48 + OCR | No | No | Yes | 56.48 | [GoogleDrive](https://drive.google.com/file/d/1coUt0IhZ7Ift7Ch7NdeUJAueohsrhEwF/view?usp=sharing)/[BaiduYun(Access Code:xex2)](https://pan.baidu.com/s/1dFYSR2bahRnvpIOdh88kOQ)|
+| HRNetV2-W48 | No | No | Yes | 55.83 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_lip_5583_torch04.pth)/[BaiduYun(Access Code:fahi)](https://pan.baidu.com/s/15DamFiGEoxwDDF1TwuZdnA)|
+| HRNetV2-W48 + OCR | No | No | Yes | 56.48 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_lip_5648_torch04.pth)/[BaiduYun(Access Code:xex2)](https://pan.baidu.com/s/1dFYSR2bahRnvpIOdh88kOQ)|
 
 **Note** Currently we could only reproduce HRNet+OCR results on LIP dataset with PyTorch 0.4.1.
 
@@ -60,20 +60,20 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 
 
 | model |num classes | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | 59 classes | No | Yes | Yes | 54.1 | [GoogleDrive](https://drive.google.com/file/d/1yUcF4pxO4a2vUAdCUICF-DM2t9KT37hC/view?usp=sharing)/[BaiduYun(Access Code:wz6v)](https://pan.baidu.com/s/1m0MqpHSk0SX380EYEMawSA)|
-| HRNetV2-W48 + OCR | 59 classes | No | Yes | Yes | 56.2 | [GoogleDrive](https://drive.google.com/file/d/1ubHPoCErl7cYDLjjTHblMeBs1hHWBCOV/view?usp=sharing)/[BaiduYun(Access Code:yyxh)](https://pan.baidu.com/s/1XYP54gr3XB76tHmCcKdU9g)|
+| HRNetV2-W48 | 59 classes | No | Yes | Yes | 54.1 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_pascal_ctx_5410_torch11.pth)/[BaiduYun(Access Code:wz6v)](https://pan.baidu.com/s/1m0MqpHSk0SX380EYEMawSA)|
+| HRNetV2-W48 + OCR | 59 classes | No | Yes | Yes | 56.2 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_pascal_ctx_5618_torch11.pth)/[BaiduYun(Access Code:yyxh)](https://pan.baidu.com/s/1XYP54gr3XB76tHmCcKdU9g)|
 | HRNetV2-W48 | 60 classes | No | Yes | Yes | 48.3 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQEHDQrZCiv4R5mf)/[BaiduYun(Access Code:9uf8)](https://pan.baidu.com/s/1pgYt8P8ht2HOOzcA0F7Kag)|
-| HRNetV2-W48 + OCR | 60 classes | No | Yes | Yes | 50.1 | [GoogleDrive](https://drive.google.com/file/d/1ZAZ94GME3wmijF7ax5bqa0P3KxNLPUXR/view?usp=sharing)/[BaiduYun(Access Code:gtkb)](https://pan.baidu.com/s/13AYjwzh1LJSlipJwNpJ3Uw)|
+| HRNetV2-W48 + OCR | 60 classes | No | Yes | Yes | 50.1 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_pascal_ctx_5410_torch11.pth)/[BaiduYun(Access Code:gtkb)](https://pan.baidu.com/s/13AYjwzh1LJSlipJwNpJ3Uw)|
 
 4. Performance on the COCO-Stuff dataset. The models are trained and tested with the input size of 520x520.
 If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 (the same as EncNet, DANet etc.).
 
 | model | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | Yes | No | No | 36.2 | [GoogleDrive](https://drive.google.com/open?id=1tXSWTCNyG4ETLfROJM1L6Lswg8wj5WvL)/[BaiduYun(Access Code:92gw)](https://pan.baidu.com/s/1VAV6KThH1Irzv9HZgLWE2Q)|
-| HRNetV2-W48 + OCR | Yes | No | No | 39.7 | [GoogleDrive](https://drive.google.com/open?id=1yMJ7-1-7LbbWotrqj1S4vM6M6Nj0feXv)/[BaiduYun(Access Code:sjc4)](https://pan.baidu.com/s/1HFSYyVwKBG3E6y76gcPjDA)|
-| HRNetV2-W48 | Yes | Yes | Yes | 37.9 | [GoogleDrive](https://drive.google.com/open?id=1tXSWTCNyG4ETLfROJM1L6Lswg8wj5WvL)/[BaiduYun(Access Code:92gw)](https://pan.baidu.com/s/1VAV6KThH1Irzv9HZgLWE2Q) |
-| HRNetV2-W48 + OCR | Yes | Yes | Yes | 40.6 | [GoogleDrive](https://drive.google.com/open?id=1yMJ7-1-7LbbWotrqj1S4vM6M6Nj0feXv)/[BaiduYun(Access Code:sjc4)](https://pan.baidu.com/s/1HFSYyVwKBG3E6y76gcPjDA) |
+| HRNetV2-W48 | Yes | No | No | 36.2 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_cocostuff_3617_torch04.pth)/[BaiduYun(Access Code:92gw)](https://pan.baidu.com/s/1VAV6KThH1Irzv9HZgLWE2Q)|
+| HRNetV2-W48 + OCR | Yes | No | No | 39.7 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_cocostuff_3965_torch04.pth)/[BaiduYun(Access Code:sjc4)](https://pan.baidu.com/s/1HFSYyVwKBG3E6y76gcPjDA)|
+| HRNetV2-W48 | Yes | Yes | Yes | 37.9 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_cocostuff_3617_torch04.pth)/[BaiduYun(Access Code:92gw)](https://pan.baidu.com/s/1VAV6KThH1Irzv9HZgLWE2Q) |
+| HRNetV2-W48 + OCR | Yes | Yes | Yes | 40.6 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_cocostuff_3965_torch04.pth)/[BaiduYun(Access Code:sjc4)](https://pan.baidu.com/s/1HFSYyVwKBG3E6y76gcPjDA) |
 
 **Note** We reproduce HRNet+OCR results on COCO-Stuff dataset with PyTorch 0.4.1.
 
@@ -82,10 +82,10 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 
 
 | model | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: |
-| HRNetV2-W48 | Yes | No | No | 43.1 | [GoogleDrive](https://drive.google.com/open?id=1OlTm8k3fIQpZXmOKXipd5BdxVYtbSWt-)/[BaiduYun(Access Code:f6xf)](https://pan.baidu.com/s/11neVkzxx27qS2-mPFW9dfg)|
-| HRNetV2-W48 + OCR | Yes | No | No | 44.5 | [GoogleDrive](https://drive.google.com/open?id=1JEzwhkcPUc-HXnq5ErbWy0vWnNpI9sZ8)/[BaiduYun(Access Code:peg4)](https://pan.baidu.com/s/1HLhjiLIdgaOHs0SzEtkgkQ)|
-| HRNetV2-W48 | Yes | Yes | Yes | 44.2 | [GoogleDrive](https://drive.google.com/open?id=1OlTm8k3fIQpZXmOKXipd5BdxVYtbSWt-)/[BaiduYun(Access Code:f6xf)](https://pan.baidu.com/s/11neVkzxx27qS2-mPFW9dfg) |
-| HRNetV2-W48 + OCR | Yes | Yes | Yes | 45.5 | [GoogleDrive](https://drive.google.com/open?id=1JEzwhkcPUc-HXnq5ErbWy0vWnNpI9sZ8)/[BaiduYun(Access Code:peg4)](https://pan.baidu.com/s/1HLhjiLIdgaOHs0SzEtkgkQ) |
+| HRNetV2-W48 | Yes | No | No | 43.1 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ade20k_4312_torch04.pth)/[BaiduYun(Access Code:f6xf)](https://pan.baidu.com/s/11neVkzxx27qS2-mPFW9dfg)|
+| HRNetV2-W48 + OCR | Yes | No | No | 44.5 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_ade20k_4451_torch04.pth)/[BaiduYun(Access Code:peg4)](https://pan.baidu.com/s/1HLhjiLIdgaOHs0SzEtkgkQ)|
+| HRNetV2-W48 | Yes | Yes | Yes | 44.2 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ade20k_4312_torch04.pth)/[BaiduYun(Access Code:f6xf)](https://pan.baidu.com/s/11neVkzxx27qS2-mPFW9dfg) |
+| HRNetV2-W48 + OCR | Yes | Yes | Yes | 45.5 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_ade20k_4451_torch04.pth)/[BaiduYun(Access Code:peg4)](https://pan.baidu.com/s/1HLhjiLIdgaOHs0SzEtkgkQ) |
 
 **Note** We reproduce HRNet+OCR results on ADE20K dataset with PyTorch 0.4.1.
 
@@ -234,7 +234,7 @@ python tools/test.py --cfg experiments/cocostuff/seg_hrnet_ocr_w48_520x520_ohem_
 Evaluating HRNet+OCR on the ADE20K validation set with multi-scale and flip testing:
 ````bash
 python tools/test.py --cfg experiments/ade20k/seg_hrnet_ocr_w48_520x520_ohem_sgd_lr2e-2_wd1e-4_bs_16_epoch120.yaml \
-                     DATASET.TEST_SET list/cocostuff/testval.lst \
+                     DATASET.TEST_SET list/ade20k/testval.lst \
                      TEST.MODEL_FILE hrnet_ocr_ade20k_4451_torch04.pth \
                      TEST.SCALE_LIST 0.5,0.75,1.0,1.25,1.5,1.75,2.0 \
                      TEST.MULTI_SCALE True TEST.FLIP_TEST True
