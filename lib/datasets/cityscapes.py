@@ -100,7 +100,9 @@ class Cityscapes(BaseDataset):
     def __getitem__(self, index):
         item = self.files[index]
         name = item["name"]
-        image = cv2.imread(os.path.join(self.root,'cityscapes',item["img"]),
+        # image = cv2.imread(os.path.join(self.root,'cityscapes',item["img"]),
+        #                    cv2.IMREAD_COLOR)
+        image = cv2.imread(os.path.join(self.root, item["img"]),
                            cv2.IMREAD_COLOR)
         size = image.shape
 
@@ -110,7 +112,9 @@ class Cityscapes(BaseDataset):
 
             return image.copy(), np.array(size), name
 
-        label = cv2.imread(os.path.join(self.root,'cityscapes',item["label"]),
+        # label = cv2.imread(os.path.join(self.root,'cityscapes',item["label"]),
+        #                    cv2.IMREAD_GRAYSCALE)
+        label = cv2.imread(os.path.join(self.root, item["label"]),
                            cv2.IMREAD_GRAYSCALE)
         label = self.convert_label(label)
 

@@ -17,7 +17,7 @@ DATASET:
 MODEL:
   NAME: seg_hrnet
   ALIGN_CORNERS: False
-  PRETRAINED: '../../../../dataset/pretrained_models/hrnetv2_w48_imagenet_pretrained_top1_21.pth'
+  PRETRAINED: '../../../../dataset/pretrained_models/HRNet_W48_C_ssld_pretrained.pth'
   EXTRA:
     FINAL_CONV_KERNEL: 1
     STAGE1:
@@ -77,7 +77,7 @@ TRAIN:
   - 1024
   - 512
   BASE_SIZE: 2048
-  BATCH_SIZE_PER_GPU: 3
+  BATCH_SIZE_PER_GPU: 2
   SHUFFLE: true
   BEGIN_EPOCH: 0
   END_EPOCH: 484
