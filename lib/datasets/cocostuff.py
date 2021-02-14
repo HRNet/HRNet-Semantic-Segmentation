@@ -87,8 +87,10 @@ class COCOStuff(BaseDataset):
     def __getitem__(self, index):
         item = self.files[index]
         name = item["name"]
-        image_path = os.path.join(self.root, 'cocostuff', item['img'])
-        label_path = os.path.join(self.root, 'cocostuff', item['label'])
+        # image_path = os.path.join(self.root, 'cocostuff', item['img'])
+        # label_path = os.path.join(self.root, 'cocostuff', item['label'])
+        image_path = os.path.join(self.root, item['img'])
+        label_path = os.path.join(self.root, item['label'])
         image = cv2.imread(
             image_path,
             cv2.IMREAD_COLOR

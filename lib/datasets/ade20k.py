@@ -69,8 +69,10 @@ class ADE20K(BaseDataset):
     def __getitem__(self, index):
         item = self.files[index]
         name = item["name"]
-        image_path = os.path.join(self.root, 'ade20k', item['img'])
-        label_path = os.path.join(self.root, 'ade20k', item['label'])
+        # image_path = os.path.join(self.root, 'ade20k', item['img'])
+        # label_path = os.path.join(self.root, 'ade20k', item['label'])
+        image_path = os.path.join(self.root, item['img'])
+        label_path = os.path.join(self.root, item['label'])
         image = cv2.imread(
             image_path,
             cv2.IMREAD_COLOR

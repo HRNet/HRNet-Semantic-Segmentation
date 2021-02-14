@@ -80,11 +80,18 @@ class LIP(BaseDataset):
             "train_images", "LIP_Train").replace("val_images", "LIP_Val")
         item["label"] = item["label"].replace(
             "train_segmentations", "LIP_Train").replace("val_segmentations", "LIP_Val")
+        # image = cv2.imread(os.path.join(
+        #     self.root, 'lip/TrainVal_images/', item["img"]),
+        #     cv2.IMREAD_COLOR)
+        # label = cv2.imread(os.path.join(
+        #     self.root, 'lip/TrainVal_parsing_annotations/',
+        #     item["label"]),
+        #     cv2.IMREAD_GRAYSCALE)
         image = cv2.imread(os.path.join(
-            self.root, 'lip/TrainVal_images/', item["img"]),
+            self.root, 'TrainVal_images/', item["img"]),
             cv2.IMREAD_COLOR)
         label = cv2.imread(os.path.join(
-            self.root, 'lip/TrainVal_parsing_annotations/',
+            self.root, 'TrainVal_parsing_annotations/',
             item["label"]),
             cv2.IMREAD_GRAYSCALE)
         size = label.shape

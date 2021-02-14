@@ -7,5 +7,5 @@ $PYTHON -m pip install -r requirements.txt
 $PYTHON -m torch.distributed.launch \
         --nproc_per_node=$GPU_NUM \
         tools/train.py \
-        --cfg experiments/cityscapes/$CONFIG.yaml \
+        --cfg experiments/$CONFIG.yaml \
         2>&1 | tee local_log.txt

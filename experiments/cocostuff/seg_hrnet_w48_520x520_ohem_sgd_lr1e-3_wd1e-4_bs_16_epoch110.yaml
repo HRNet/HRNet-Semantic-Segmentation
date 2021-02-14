@@ -10,9 +10,9 @@ PRINT_FREQ: 10
 
 DATASET:
   DATASET: cocostuff
-  ROOT: 'data/'
-  TEST_SET: 'list/cocostuff/val.lst'
-  TRAIN_SET: 'list/cocostuff/train.lst'
+  ROOT: '../../../../dataset/coco_stuff_10k/'
+  TEST_SET: 'val.lst'
+  TRAIN_SET: 'train.lst'
   NUM_CLASSES: 171
 MODEL:
   NAME: seg_hrnet

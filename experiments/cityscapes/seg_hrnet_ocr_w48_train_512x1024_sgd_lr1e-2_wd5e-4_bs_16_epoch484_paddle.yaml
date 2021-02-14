@@ -2,10 +2,10 @@ CUDNN:
   BENCHMARK: true
   DETERMINISTIC: false
   ENABLED: true
-GPUS: (0,1,2,3)
+GPUS: (0,1,2,3,4,5,6,7)
 OUTPUT_DIR: 'output'
 LOG_DIR: 'log'
-WORKERS: 4
+WORKERS: 8
 PRINT_FREQ: 100
 
 DATASET:
@@ -15,9 +15,9 @@ DATASET:
   TRAIN_SET: 'train.lst'
   NUM_CLASSES: 19
 MODEL:
-  NAME: seg_hrnet
-  ALIGN_CORNERS: False
-  PRETRAINED: '../../../../dataset/pretrained_models/hrnetv2_w48_imagenet_pretrained_top1_21.pth'
+  NAME: seg_hrnet_ocr
+  NUM_OUTPUTS: 2
+  PRETRAINED: '../../../../dataset/pretrained_models/HRNet_W48_C_ssld_pretrained.pth'
   EXTRA:
     FINAL_CONV_KERNEL: 1
     STAGE1:
@@ -72,6 +72,7 @@ LOSS:
   USE_OHEM: false
   OHEMTHRES: 0.9
   OHEMKEEP: 131072
+  BALANCE_WEIGHTS: [0.4, 1]
 TRAIN:
   IMAGE_SIZE:
   - 1024
@@ -97,6 +98,6 @@ TEST:
   - 2048
   - 1024
   BASE_SIZE: 2048
-  BATCH_SIZE_PER_GPU: 4
+  BATCH_SIZE_PER_GPU: 2
   FLIP_TEST: false
   MULTI_SCALE: false
