@@ -86,7 +86,7 @@ TRAIN:
   OPTIMIZER: sgd
   LR: 0.001
   WD: 0.0001
-  NONBACKBONE_KEYWORDS: ['last_layer']
+  NONBACKBONE_KEYWORDS: ['cls', 'aux', 'ocr']
   NONBACKBONE_MULT: 10
   MOMENTUM: 0.9
   NESTEROV: false
