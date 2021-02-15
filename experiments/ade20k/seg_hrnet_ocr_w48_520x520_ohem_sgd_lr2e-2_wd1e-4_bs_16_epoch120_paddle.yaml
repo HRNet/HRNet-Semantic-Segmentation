@@ -16,7 +16,7 @@ DATASET:
   NUM_CLASSES: 150
 MODEL:
   NAME: seg_hrnet_ocr
-  NUM_OUTPUTS: 1
+  NUM_OUTPUTS: 2
   PRETRAINED: '../../../../dataset/pretrained_models/HRNet_W48_C_ssld_pretrained.pth'
   EXTRA:
     FINAL_CONV_KERNEL: 1
@@ -92,7 +92,7 @@ TRAIN:
   MULTI_SCALE: true
   DOWNSAMPLERATE: 1
   IGNORE_LABEL: 255
-  SCALE_FACTOR: 11
+  SCALE_FACTOR: 16
 TEST:
   IMAGE_SIZE:
   - 520

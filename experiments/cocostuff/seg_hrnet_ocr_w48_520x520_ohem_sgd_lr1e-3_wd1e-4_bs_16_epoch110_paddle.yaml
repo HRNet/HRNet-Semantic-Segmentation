@@ -16,7 +16,7 @@ DATASET:
   NUM_CLASSES: 171
 MODEL:
   NAME: seg_hrnet_ocr
-  NUM_OUTPUTS: 1
+  NUM_OUTPUTS: 2
   PRETRAINED: '../../../../dataset/pretrained_models/HRNet_W48_C_ssld_pretrained.pth'
   EXTRA:
     FINAL_CONV_KERNEL: 1
