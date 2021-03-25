@@ -51,11 +51,10 @@ class LIP(BaseDataset):
         files = []
         for item in self.img_list:
             if 'train' in self.list_path:
-                image_path, label_path, label_rev_path, _ = item
+                image_path, label_path, _ = item
                 name = os.path.splitext(os.path.basename(label_path))[0]
                 sample = {"img": image_path,
                           "label": label_path,
-                          "label_rev": label_rev_path,
                           "name": name, }
             elif 'val' in self.list_path:
                 image_path, label_path = item
@@ -76,26 +75,29 @@ class LIP(BaseDataset):
     def __getitem__(self, index):
         item = self.files[index]
         name = item["name"]
-        item["img"] = item["img"].replace(
-            "train_images", "LIP_Train").replace("val_images", "LIP_Val")
-        item["label"] = item["label"].replace(
-            "train_segmentations", "LIP_Train").replace("val_segmentations", "LIP_Val")
+        # item["img"] = item["img"].replace(
+        #     "train_images", "LIP_Train").replace("val_images", "LIP_Val")
+        # item["label"] = item["label"].replace(
+        #     "train_segmentations", "LIP_Train").replace("val_segmentations", "LIP_Val")
         # image = cv2.imread(os.path.join(
-        #     self.root, 'lip/TrainVal_images/', item["img"]),
+        #     self.root, 'TrainVal_images/', item["img"]),
         #     cv2.IMREAD_COLOR)
         # label = cv2.imread(os.path.join(
-        #     self.root, 'lip/TrainVal_parsing_annotations/',
+        #     self.root, 'TrainVal_parsing_annotations/',
         #     item["label"]),
         #     cv2.IMREAD_GRAYSCALE)
-        image = cv2.imread(os.path.join(
-            self.root, 'TrainVal_images/', item["img"]),
-            cv2.IMREAD_COLOR)
-        label = cv2.imread(os.path.join(
-            self.root, 'TrainVal_parsing_annotations/',
-            item["label"]),
-            cv2.IMREAD_GRAYSCALE)
-        size = label.shape
 
+        image_path = os.path.join(self.root, item['img'])
+        label_path = os.path.join(self.root, item['label'])
+        image = cv2.imread(
+            image_path,
+            cv2.IMREAD_COLOR
+        )
+        label = np.array(
+            Image.open(label_path).convert('P')
+        )
+
+        size = label.shape
         if 'testval' in self.list_path:
             image = cv2.resize(image, self.crop_size,
                                interpolation=cv2.INTER_LINEAR)

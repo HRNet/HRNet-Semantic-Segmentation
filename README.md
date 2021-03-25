@@ -36,7 +36,8 @@ Besides, we further combine HRNet with [Object Contextual Representation](https:
 </figure>
 
 ## Segmentation models
-The models are initialized by the weights pretrained on the ImageNet. You can download the pretrained models from  https://github.com/HRNet/HRNet-Image-Classification. *Slightly different, we use align_corners = True for upsampling in HRNet*. 
+The models are initialized by the weights pretrained on the ImageNet. ''Paddle'' means the results are based on PaddleCls pretrained HRNet models.
+You can download the pretrained models from  https://github.com/HRNet/HRNet-Image-Classification. *Slightly different, we use align_corners = True for upsampling in HRNet*.
 
 1. Performance on the Cityscapes dataset. The models are trained and tested with the input size of 512x1024 and 1024x2048 respectively.
 If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75.
@@ -44,10 +45,11 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75.
 | model | Train Set | Test Set | OHEM | Multi-scale| Flip | mIoU | Link |
 | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
 | HRNetV2-W48 | Train | Val | No | No | No | 80.9 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_cs_8090_torch11.pth)/[BaiduYun(Access Code:pmix)](https://pan.baidu.com/s/1KyiOUOR0SYxKtJfIlD5o-w)|
-| HRNetV2-W48 (Paddle) | Train | Val | No | No | No | 81.6 | [Github]()|
 | HRNetV2-W48 + OCR | Train | Val | No | No | No | 81.6 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_cs_8162_torch11.pth)/[BaiduYun(Access Code:fa6i)](https://pan.baidu.com/s/1BGNt4Xmx3yfXUS8yjde0hQ)|
-| HRNetV2-W48 + OCR (Paddle) | Train | Val | No | No | No | --- | [Github]()|
 | HRNetV2-W48 + OCR | Train + Val | Test | No | Yes | Yes | 82.3 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_cs_trainval_8227_torch11.pth)/[BaiduYun(Access Code:ycrk)](https://pan.baidu.com/s/16mD81UnGzjUBD-haDQfzIQ)|
+| HRNetV2-W48 (Paddle) | Train | Val | No | No | No | 81.6 | ---|
+| HRNetV2-W48 + OCR (Paddle) | Train | Val | No | No | No | --- | ---|
+| HRNetV2-W48 + OCR (Paddle) | Train + Val | Test | No | Yes | Yes | --- | ---|
 
 2. Performance on the LIP dataset. The models are trained and tested with the input size of 473x473.
 
@@ -55,6 +57,9 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75.
 | :--: | :--: | :--: | :--: | :--: | :--: |
 | HRNetV2-W48 | No | No | Yes | 55.83 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_lip_5583_torch04.pth)/[BaiduYun(Access Code:fahi)](https://pan.baidu.com/s/15DamFiGEoxwDDF1TwuZdnA)|
 | HRNetV2-W48 + OCR | No | No | Yes | 56.48 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_lip_5648_torch04.pth)/[BaiduYun(Access Code:xex2)](https://pan.baidu.com/s/1dFYSR2bahRnvpIOdh88kOQ)|
+| HRNetV2-W48 (Paddle) | No | No | Yes | --- | --- |
+| HRNetV2-W48 + OCR (Paddle) | No | No | Yes | --- | ---|
+
 
 **Note** Currently we could only reproduce HRNet+OCR results on LIP dataset with PyTorch 0.4.1.
 
@@ -67,6 +72,10 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 
 | HRNetV2-W48 + OCR | 59 classes | No | Yes | Yes | 56.2 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_pascal_ctx_5618_torch11.pth)/[BaiduYun(Access Code:yyxh)](https://pan.baidu.com/s/1XYP54gr3XB76tHmCcKdU9g)|
 | HRNetV2-W48 | 60 classes | No | Yes | Yes | 48.3 | [OneDrive](https://1drv.ms/u/s!Aus8VCZ_C_33gQEHDQrZCiv4R5mf)/[BaiduYun(Access Code:9uf8)](https://pan.baidu.com/s/1pgYt8P8ht2HOOzcA0F7Kag)|
 | HRNetV2-W48 + OCR | 60 classes | No | Yes | Yes | 50.1 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_pascal_ctx_5410_torch11.pth)/[BaiduYun(Access Code:gtkb)](https://pan.baidu.com/s/13AYjwzh1LJSlipJwNpJ3Uw)|
+| HRNetV2-W48 (Paddle) | 59 classes | No | Yes | Yes | --- | ---|
+| HRNetV2-W48 (Paddle) | 60 classes | No | Yes | Yes | --- | ---|
+| HRNetV2-W48 + OCR (Paddle) | 59 classes | No | Yes | Yes | --- | ---|
+| HRNetV2-W48 + OCR (Paddle) | 60 classes | No | Yes | Yes | --- | ---|
 
 4. Performance on the COCO-Stuff dataset. The models are trained and tested with the input size of 520x520.
 If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 (the same as EncNet, DANet etc.).
@@ -77,8 +86,12 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 
 | HRNetV2-W48 + OCR | Yes | No | No | 39.7 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_cocostuff_3965_torch04.pth)/[BaiduYun(Access Code:sjc4)](https://pan.baidu.com/s/1HFSYyVwKBG3E6y76gcPjDA)|
 | HRNetV2-W48 | Yes | Yes | Yes | 37.9 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_cocostuff_3617_torch04.pth)/[BaiduYun(Access Code:92gw)](https://pan.baidu.com/s/1VAV6KThH1Irzv9HZgLWE2Q) |
 | HRNetV2-W48 + OCR | Yes | Yes | Yes | 40.6 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_cocostuff_3965_torch04.pth)/[BaiduYun(Access Code:sjc4)](https://pan.baidu.com/s/1HFSYyVwKBG3E6y76gcPjDA) |
+| HRNetV2-W48 (Paddle) | Yes | No | No | --- | ---|
+| HRNetV2-W48 + OCR (Paddle) | Yes | No | No | --- | ---|
+| HRNetV2-W48 (Paddle) | Yes | Yes | Yes | --- | ---|
+| HRNetV2-W48 + OCR (Paddle) | Yes | Yes | Yes | --- | ---|
 
-**Note** We reproduce HRNet+OCR results on COCO-Stuff dataset with PyTorch 0.4.1.
+<!-- **Note** We reproduce HRNet+OCR results on COCO-Stuff dataset with PyTorch 0.4.1. -->
 
 5. Performance on the ADE20K dataset. The models are trained and tested with the input size of 520x520.
 If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 (the same as EncNet, DANet etc.).
@@ -89,8 +102,12 @@ If multi-scale testing is used, we adopt scales: 0.5,0.75,1.0,1.25,1.5,1.75,2.0 
 | HRNetV2-W48 + OCR | Yes | No | No | 44.5 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_ade20k_4451_torch04.pth)/[BaiduYun(Access Code:peg4)](https://pan.baidu.com/s/1HLhjiLIdgaOHs0SzEtkgkQ)|
 | HRNetV2-W48 | Yes | Yes | Yes | 44.2 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ade20k_4312_torch04.pth)/[BaiduYun(Access Code:f6xf)](https://pan.baidu.com/s/11neVkzxx27qS2-mPFW9dfg) |
 | HRNetV2-W48 + OCR | Yes | Yes | Yes | 45.5 | [Github](https://github.com/hsfzxjy/models.storage/releases/download/HRNet-OCR/hrnet_ocr_ade20k_4451_torch04.pth)/[BaiduYun(Access Code:peg4)](https://pan.baidu.com/s/1HLhjiLIdgaOHs0SzEtkgkQ) |
+| HRNetV2-W48 (Paddle) | Yes | No | No | --- | ---|
+| HRNetV2-W48 + OCR (Paddle) | Yes | No | No | --- | ---|
+| HRNetV2-W48 (Paddle) | Yes | Yes | Yes | --- | ---|
+| HRNetV2-W48 + OCR (Paddle) | Yes | Yes | Yes | --- | ---|
 
-**Note** We reproduce HRNet+OCR results on ADE20K dataset with PyTorch 0.4.1.
+<!-- **Note** We reproduce HRNet+OCR results on ADE20K dataset with PyTorch 0.4.1. -->
 
 ## Quick start
 ### Install

@@ -17,25 +17,25 @@ import torch
 from .base_dataset import BaseDataset
 
 class PASCALContext(BaseDataset):
-    def __init__(self, 
-                 root, 
-                 list_path, 
-                 num_samples=None, 
+    def __init__(self,
+                 root,
+                 list_path,
+                 num_samples=None,
                  num_classes=59,
-                 multi_scale=True, 
-                 flip=True, 
-                 ignore_label=-1, 
-                 base_size=520, 
-                 crop_size=(480, 480), 
+                 multi_scale=True,
+                 flip=True,
+                 ignore_label=-1,
+                 base_size=520,
+                 crop_size=(480, 480),
                  downsample_rate=1,
                  scale_factor=16,
-                 mean=[0.485, 0.456, 0.406], 
-                 std=[0.229, 0.224, 0.225],):
-    
+                 mean=[0.485, 0.456, 0.406],
+                 std=[0.229, 0.224, 0.225]):
+
         super(PASCALContext, self).__init__(ignore_label, base_size,
                 crop_size, downsample_rate, scale_factor, mean, std)
-        
-        self.root = os.path.join(root, 'pascal_ctx/VOCdevkit/VOC2010')
+
+        self.root = root
         self.split = list_path
 
         self.num_classes = num_classes
