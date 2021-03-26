@@ -42,6 +42,7 @@ class COCOStuff(BaseDataset):
 
         self.multi_scale = multi_scale
         self.flip = flip
+        self.crop_size = crop_size
         self.img_list = [line.strip().split() for line in open(root+list_path)]
 
         self.files = self.read_files()

@@ -11,6 +11,7 @@ import numpy as np
 
 import torch
 from torch.nn import functional as F
+from PIL import Image
 
 from .base_dataset import BaseDataset
 
@@ -75,18 +76,6 @@ class LIP(BaseDataset):
     def __getitem__(self, index):
         item = self.files[index]
         name = item["name"]
-        # item["img"] = item["img"].replace(
-        #     "train_images", "LIP_Train").replace("val_images", "LIP_Val")
-        # item["label"] = item["label"].replace(
-        #     "train_segmentations", "LIP_Train").replace("val_segmentations", "LIP_Val")
-        # image = cv2.imread(os.path.join(
-        #     self.root, 'TrainVal_images/', item["img"]),
-        #     cv2.IMREAD_COLOR)
-        # label = cv2.imread(os.path.join(
-        #     self.root, 'TrainVal_parsing_annotations/',
-        #     item["label"]),
-        #     cv2.IMREAD_GRAYSCALE)
-
         image_path = os.path.join(self.root, item['img'])
         label_path = os.path.join(self.root, item['label'])
         image = cv2.imread(

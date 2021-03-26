@@ -5,18 +5,19 @@ CUDNN:
 GPUS: (0,1,2,3)
 OUTPUT_DIR: 'output'
 LOG_DIR: 'log'
-WORKERS: 8
+WORKERS: 4
 PRINT_FREQ: 10
 
 DATASET:
-  DATASET: lip
-  ROOT: '../../../../dataset/lip/'
+  DATASET: pascal_ctx
+  ROOT: '../../../../dataset/pascal_context/'
   TEST_SET: 'val.lst'
   TRAIN_SET: 'train.lst'
-  NUM_CLASSES: 20
+  NUM_CLASSES: 59
 MODEL:
   NAME: seg_hrnet
   ALIGN_CORNERS: False
+  NUM_OUTPUTS: 1
   PRETRAINED: '../../../../dataset/pretrained_models/HRNet_W48_C_ssld_pretrained.pth'
   EXTRA:
     FINAL_CONV_KERNEL: 1
@@ -74,30 +75,31 @@ LOSS:
   OHEMKEEP: 131072
 TRAIN:
   IMAGE_SIZE:
-  - 473
-  - 473
-  BASE_SIZE: 473
-  BATCH_SIZE_PER_GPU: 10
+  - 520
+  - 520
+  BASE_SIZE: 520
+  BATCH_SIZE_PER_GPU: 4
+  NONBACKBONE_KEYWORDS: ['last_layer']
+  NONBACKBONE_MULT: 10  
   SHUFFLE: true
   BEGIN_EPOCH: 0
-  END_EPOCH: 150
+  END_EPOCH: 200
   RESUME: true
   OPTIMIZER: sgd
-  LR: 0.007
-  WD: 0.0005
+  LR: 0.001
+  WD: 0.0001
   MOMENTUM: 0.9
   NESTEROV: false
   FLIP: true
   MULTI_SCALE: true
   DOWNSAMPLERATE: 1
-  IGNORE_LABEL: 255
-  SCALE_FACTOR: 11
+  IGNORE_LABEL: -1
+  SCALE_FACTOR: 16
 TEST:
   IMAGE_SIZE:
-  - 473
-  - 473
-  BASE_SIZE: 473
-  BATCH_SIZE_PER_GPU: 8
-  NUM_SAMPLES: 2000
+  - 520
+  - 520
+  BASE_SIZE: 520
+  BATCH_SIZE_PER_GPU: 16
   FLIP_TEST: false
   MULTI_SCALE: false
