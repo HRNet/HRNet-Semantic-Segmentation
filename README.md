@@ -76,7 +76,7 @@ Performance on the Cityscapes dataset. The models are trained and tested with th
 
 ## Quick start
 ### Install
-1. Install PyTorch=0.4.1 following the [official instructions](https://pytorch.org/)
+1. Install PyTorch=0.4.1 following the [official instructions](https://pytorch.org/) or [this](torch_installation.md)
 2. git clone https://github.com/HRNet/HRNet-Semantic-Segmentation $SEG_ROOT
 3. Install dependencies: pip install -r requirements.txt
 
