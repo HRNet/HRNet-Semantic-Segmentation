@@ -63,7 +63,7 @@ class SpatialGather_Module(nn.Module):
         feats = feats.permute(0, 2, 1) # batch x hw x c 
         probs = F.softmax(self.scale * probs, dim=2)# batch x k x hw
         ocr_context = torch.matmul(probs, feats)\
-        .permute(0, 2, 1).unsqueeze(3)# batch x k x c
+        .permute(0, 2, 1).unsqueeze(3) # batch x c x k x 1
         return ocr_context
 
 
