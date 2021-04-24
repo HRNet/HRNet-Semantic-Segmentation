@@ -139,6 +139,39 @@ def get_confusion_matrix(label, pred, size, num_class, ignore=-1):
                                  i_pred] = label_count[cur_index]
     return confusion_matrix
 
+def get_confusion_matrix_gpu(label, pred, size, num_class, ignore=-1, device=None):
+    """
+    The original version calculate the conf_mat in numpy array
+    which introduces highly expensive gpu2cpu cost
+    makes the validation in each epoch too slow.
+    To solve this problem
+    a conf_mat calculation method by torch api is provided here
+    which eliminates the gpu2cpu data trans.
+    """
+    n, c, h, w = pred.shape
+
+    output_gpu = pred.reshape([n,c,-1])
+    output_gpu = torch.transpose(output_gpu, 1, 2)
+    output_gpu = torch.reshape(output_gpu, [n, h, w, c])
+
+    seg_pred_gpu = torch.argmax(output_gpu, axis=3)
+    seg_gt_gpu = label[:, :h, :w]
+
+    ignore_index_gpu = ~seg_gt_gpu.eq(ignore)
+
+    seg_gt_gpu = seg_gt_gpu[ignore_index_gpu]
+    seg_pred_gpu = seg_pred_gpu[ignore_index_gpu]
+
+    index_gpu = (seg_gt_gpu * num_class + seg_pred_gpu).int()
+    label_count_gpu = torch.bincount(index_gpu)
+
+    label_count_gpu_len = label_count_gpu.shape[0]
+    confusion_matrix_gpu = torch.zeros([num_class*num_class,], device = device)
+    confusion_matrix_gpu[0:label_count_gpu_len] += label_count_gpu
+    confusion_matrix_gpu = torch.reshape(confusion_matrix_gpu, [num_class,num_class])
+
+    return confusion_matrix_gpu
+
 def adjust_learning_rate(optimizer, base_lr, max_iters, 
         cur_iters, power=0.9):
     lr = base_lr*((1-float(cur_iters)/max_iters)**(power))

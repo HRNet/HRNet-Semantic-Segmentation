@@ -92,8 +92,7 @@ def validate(config, testloader, model, writer_dict, device):
     world_size = get_world_size()
     model.eval()
     ave_loss = AverageMeter()
-    confusion_matrix = np.zeros(
-        (config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES))
+    confusion_matrix = torch.zeros([config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES], device=device)
 
     with torch.no_grad():
         for _, batch in enumerate(testloader):
@@ -109,22 +108,18 @@ def validate(config, testloader, model, writer_dict, device):
             reduced_loss = reduce_tensor(loss)
             ave_loss.update(reduced_loss.item())
 
-            confusion_matrix += get_confusion_matrix(
-                label,
-                pred,
-                size,
-                config.DATASET.NUM_CLASSES,
-                config.TRAIN.IGNORE_LABEL)
+            confusion_matrix += get_confusion_matrix_gpu(label, pred, size,
+                                                        config.DATASET.NUM_CLASSES,
+                                                        config.TRAIN.IGNORE_LABEL,
+                                                        device)
 
-    confusion_matrix = torch.from_numpy(confusion_matrix).to(device)
     reduced_confusion_matrix = reduce_tensor(confusion_matrix)
 
-    confusion_matrix = reduced_confusion_matrix.cpu().numpy()
-    pos = confusion_matrix.sum(1)
-    res = confusion_matrix.sum(0)
-    tp = np.diag(confusion_matrix)
-    IoU_array = (tp / np.maximum(1.0, pos + res - tp))
-    mean_IoU = IoU_array.mean()
+    pos = torch.sum(reduced_confusion_matrix, 1)
+    res = torch.sum(reduced_confusion_matrix, 0)
+    tp = torch.diag(reduced_confusion_matrix)
+    IoU_array = (tp / torch.maximum(torch.ones_like(tp), pos + res - tp))
+    mean_IoU = torch.mean(IoU_array)
     print_loss = ave_loss.average()/world_size
 
     if rank == 0:
