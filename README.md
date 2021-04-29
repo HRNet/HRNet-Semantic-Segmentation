@@ -1,8 +1,8 @@
 # High-resolution networks (HRNets) for Semantic Segmentation
 ## Branches
 - This is the implementation for HRNet + OCR.
-- The PyTroch 1.1 version ia available [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/pytorch-v1.1).
-- The PyTroch 0.4.1 version is available [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/master).
+- The PyTorch 1.1 version ia available [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/pytorch-v1.1).
+- The PyTorch 0.4.1 version is available [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/master).
 
 ## News
 - [2021/02/16] Based on the [PaddleClas](https://github.com/PaddlePaddle/PaddleClas) ImageNet pretrained weights, we achieve **83.22%** on Cityscapes val, **59.62%** on PASCAL-Context val (**new SOTA**), **45.20%** on COCO-Stuff val (**new SOTA**), **58.21%** on LIP val and  **47.98%** on ADE20K val. Please checkout [openseg.pytorch](https://github.com/openseg-group/openseg.pytorch/tree/pytorch-1.7) for more details.
