@@ -1,8 +1,8 @@
 # High-resolution networks and Segmentation Transformer for Semantic Segmentation
 ## Branches
 - This is the implementation for HRNet + OCR.
-- The PyTroch 1.1 version ia available [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/pytorch-v1.1).
-- The PyTroch 0.4.1 version is available [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/master).
+- The PyTorch 1.1 version ia available [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/pytorch-v1.1).
+- The PyTorch 0.4.1 version is available [here](https://github.com/HRNet/HRNet-Semantic-Segmentation/tree/master).
 
 ## News
 - [2021/05/04] We rephrase the OCR approach as **Segmentation Transformer** [pdf](https://arxiv.org/pdf/1909.11065.pdf). We will provide the updated implementation soon.
