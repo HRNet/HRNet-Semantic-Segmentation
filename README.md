@@ -39,10 +39,7 @@ Besides, we further combine HRNet with [Object Contextual Representation](https:
  <figure>
   <text-align: center;>
   <img src="./figures/SegmentationTransformerOCR1.png" alt="Segmentation Transformer" title="" width="400" />
-</figure>
-  <figure>
-  <text-align: center;>
-  <img src="./figures/SegmentationTransformerOCR2.png" alt="Segmentation Transformer" title="" width="200" />
+    <img src="./figures/SegmentationTransformerOCR2.png" alt="Segmentation Transformer" title="" width="200" />
 </figure>
 
 ## Segmentation models
