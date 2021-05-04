@@ -1,4 +1,4 @@
-# High-resolution networks (HRNets) for Semantic Segmentation
+# High-resolution networks and Segmentation Transformer for Semantic Segmentation
 ## Branches
 - We rephrase the OCR approach as Segmentation Transformer [pdf](https://arxiv.org/pdf/1909.11065.pdf). We will provide the updated implementation soon.
 - This is the implementation for HRNet + OCR.
