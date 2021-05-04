@@ -36,7 +36,14 @@ Besides, we further combine HRNet with [Object Contextual Representation](https:
   <img src="./figures/OCR.PNG" alt="OCR" title="" width="900" height="200" />
 </figure>
   
- 
+ <figure>
+  <text-align: center;>
+  <img src="./figures/SegmentationTransformerOCR1.png" alt="Segmentation Transformer" title="" width="400" />
+</figure>
+  <figure>
+  <text-align: center;>
+  <img src="./figures/SegmentationTransformerOCR2.png" alt="Segmentation Transformer" title="" width="200" />
+</figure>
 
 ## Segmentation models
 The models are initialized by the weights pretrained on the ImageNet. ''Paddle'' means the results are based on PaddleCls pretrained HRNet models.
