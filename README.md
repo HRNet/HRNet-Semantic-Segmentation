@@ -29,12 +29,14 @@ We augment the HRNet with a very simple segmentation head shown in the figure be
 </figcaption>
 </figure>
 
-Besides, we further combine HRNet with [Object Contextual Representation](https://arxiv.org/pdf/1909.11065.pdf) and achieve higher performance on the three datasets. The code of HRNet+OCR is contained in this branch. We illustrate the overall framework of OCR in the Figure as shown below:
+Besides, we further combine HRNet with [Object Contextual Representation](https://arxiv.org/pdf/1909.11065.pdf) and achieve higher performance on the three datasets. The code of HRNet+OCR is contained in this branch. We illustrate the overall framework of OCR in the Figure and the equivalent Transformer pipelines:
 
 <figure>
   <text-align: center;>
   <img src="./figures/OCR.PNG" alt="OCR" title="" width="900" height="200" />
 </figure>
+  
+ 
 
 ## Segmentation models
 The models are initialized by the weights pretrained on the ImageNet. ''Paddle'' means the results are based on PaddleCls pretrained HRNet models.
