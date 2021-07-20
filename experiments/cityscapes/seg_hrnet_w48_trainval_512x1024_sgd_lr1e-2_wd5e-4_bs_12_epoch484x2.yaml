@@ -23,7 +23,7 @@ MODEL:
     FINAL_CONV_KERNEL: 1
     STAGE1:
       NUM_MODULES: 1
-      NUM_RANCHES: 1
+      NUM_BRANCHES: 1
       BLOCK: BOTTLENECK
       NUM_BLOCKS:
       - 4
